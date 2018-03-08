@@ -27,6 +27,11 @@ class AppointmentsTest(SupersaasTest):
         user_id = 67890
         self.assertIsNotNone(self.client.appointments.agenda(schedule_id, user_id))
 
+    def test_agenda_slots(self):
+        schedule_id = 12345
+        user_id = 67890
+        self.assertIsNotNone(self.client.appointments.agenda_slots(schedule_id, user_id))
+
     def test_available(self):
         schedule_id = 12345
         self.assertIsNotNone(self.client.appointments.available(schedule_id, datetime.now(), 10))
@@ -37,11 +42,11 @@ class AppointmentsTest(SupersaasTest):
 
     def test_changes(self):
         schedule_id = 12345
-        self.assertIsNotNone(self.client.appointments.changes(schedule_id, "2017-01-31 14:30:00", False))
+        self.assertIsNotNone(self.client.appointments.changes(schedule_id, "2017-01-31 14:30:00"))
 
-    def test_changes_slot(self):
+    def test_changes_slots(self):
         schedule_id = 12345
-        self.assertIsNotNone(self.client.appointments.changes(schedule_id, datetime.now(), True))
+        self.assertIsNotNone(self.client.appointments.changes_slots(schedule_id, datetime.now()))
 
     def test_delete(self):
         appointment_id = 12345

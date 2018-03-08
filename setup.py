@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='supersaas-api-client',
-    version='1.0.0',
+    version='0.9.0',
     license='MIT',
     packages=find_packages(),
     include_package_data=True,
@@ -11,7 +11,7 @@ setup(
     author_email='travis@supersaas.com',
     keywords=['online appointment schedule', 'booking calendar', 'appointment book', 'reservation system', 
               'scheduling software', 'online booking system', 'scheduling system'],
-    url='github.com/SuperSaaS/supersaas-python-api',
+    url='github.com/SuperSaaS/supersaas-python-api-client',
     install_requires=[
     ],
     classifiers=[

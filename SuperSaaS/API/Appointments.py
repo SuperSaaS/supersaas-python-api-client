@@ -4,15 +4,24 @@ from ..Models.Slot import Slot
 
 
 class Appointments(BaseApi):
-    def agenda(self, schedule_id, user_id, from_time=None, slot=None):
+    def agenda(self, schedule_id, user_id, from_time=None):
+        path = "/agenda/{}".format(self._validate_id(schedule_id))
+        query = {
+            'user': self._validate_present(user_id),
+            'from': self._validate_datetime(from_time) if from_time else None
+        }
+        res = self.client.get(path, query)
+        return self.__map_slots_or_bookings(res)
+
+    def agenda_slots(self, schedule_id, user_id, from_time=None):
         path = "/agenda/{}".format(self._validate_id(schedule_id))
         query = {
             'user': self._validate_present(user_id),
             'from': self._validate_datetime(from_time) if from_time else None,
-            'slot': 'true' if slot else None
+            'slot': 'true'
         }
         res = self.client.get(path, query)
-        return self.__map_slots_or_bookings(res, slot)
+        return self.__map_slots_or_bookings(res, True)
 
     def available(self, schedule_id, from_time=None, length_minutes=None, resource=None, full=None, limit=None):
         path = "/free/{}".format(self._validate_id(schedule_id))
@@ -104,14 +113,22 @@ class Appointments(BaseApi):
         path = "/bookings/{}".format(self._validate_id(appointment_id))
         return self.client.delete(path)
 
-    def changes(self, schedule_id, from_time=None, slot=False):
+    def changes(self, schedule_id, from_time=None):
+        path = "/changes/{}".format(self._validate_id(schedule_id))
+        query = {
+            'from': self._validate_datetime(from_time) if from_time else None
+        }
+        res = self.client.get(path, query)
+        return self.__map_slots_or_bookings(res)
+
+    def changes_slots(self, schedule_id, from_time=None):
         path = "/changes/{}".format(self._validate_id(schedule_id))
         query = {
             'from': self._validate_datetime(from_time) if from_time else None,
-            'slot': 'true' if slot else None
+            'slot': 'true'
         }
         res = self.client.get(path, query)
-        return self.__map_slots_or_bookings(res, slot)
+        return self.__map_slots_or_bookings(res, True)
 
     def __map_slots_or_bookings(self, obj, slot=False):
         if slot:
