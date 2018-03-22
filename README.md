@@ -42,7 +42,7 @@ Initialize the SuperSaaS `Client` with authorization credentials:
     
 > Note, ensure that `configure` is called before `instance`, otherwise the client will be initialized with configuration defaults.
 
-If the client isn't configured explicitly, it will use default `ENV` variables for the account name, password, and user name.
+If the client isn't configured explicitly, it will use default `ENV` variables for the account name and password.
 
     ENV['SSS_API_ACCOUNT_NAME'] = 'your-env-supersaas-account-name'
     ENV['SSS_API_PASSWORD'] = 'your-env-supersaas-account-name' 
@@ -159,7 +159,7 @@ Get available appointments by `schedule_id`, with `from_time` time and `length_m
 
 Get recently changed appointments by `schedule_id`, with `from_time` view param:
 
-    Client.instance().appointments.changes(schedule_id=12345, from_time='2018-1-31 00:00:00', true) #=> [<Supersaas::Appointment>, ...]
+    Client.instance().appointments.changes(schedule_id=12345, from_time='2018-1-31 00:00:00', true)
 
 #### Get Recent Changes Slots
 
