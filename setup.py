@@ -12,9 +12,13 @@ setup(
     author_email='travis@supersaas.com',
     keywords=['online appointment schedule', 'booking calendar', 'appointment book', 'reservation system', 
               'scheduling software', 'online booking system', 'scheduling system'],
-    url='https://github.com/SuperSaaS/supersaas-python-api-client',
+    url='https://www.supersaas.com',
     install_requires=[
     ],
+    project_urls={
+        'Documentation': 'https://www.supersaas.com/info/dev',
+        'Source': 'https://github.com/SuperSaaS/supersaas-python-api-client'
+    },
     classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',
