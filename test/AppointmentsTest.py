@@ -49,8 +49,9 @@ class AppointmentsTest(SupersaasTest):
         self.assertIsNotNone(self.client.appointments.changes_slots(schedule_id, datetime.now()))
 
     def test_delete(self):
-        appointment_id = 12345
-        self.assertIsNotNone(self.client.appointments.delete(appointment_id))
+        schedule_id = 12345
+        appointment_id = 67890
+        self.assertIsNotNone(self.client.appointments.delete(schedule_id, appointment_id))
 
     def __appointment_attributes(self):
         return {

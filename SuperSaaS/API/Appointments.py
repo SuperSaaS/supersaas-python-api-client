@@ -109,9 +109,12 @@ class Appointments(BaseApi):
         res = self.client.put(path, params)
         return Appointment(res)
 
-    def delete(self, appointment_id):
+    def delete(self, schedule_id, appointment_id):
         path = "/bookings/{}".format(self._validate_id(appointment_id))
-        return self.client.delete(path)
+        query = {
+            'schedule_id': schedule_id
+        }
+        return self.client.delete(path, None, query)
 
     def changes(self, schedule_id, from_time=None):
         path = "/changes/{}".format(self._validate_id(schedule_id))

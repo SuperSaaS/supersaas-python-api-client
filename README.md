@@ -119,9 +119,9 @@ Update an appointment by `schedule_id` and `appointment_id` with appointment att
 
 #### Delete Appointment/Booking
 
-Delete a single appointment by `appointment_id`:
+Delete a single appointment by `schedule_id` and `appointment_id`:
 
-    Client.instance().appointments.delete(appointment_id=12345)
+    Client.instance().appointments.delete(schedule_id=12345, appointment_id=67890)
 
 #### Get Appointment/Booking
 
