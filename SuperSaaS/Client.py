@@ -1,5 +1,6 @@
 import sys
 import threading
+import os
 
 try:
     from urllib.parse import urlparse, urlencode
@@ -14,6 +15,11 @@ try:
     import json
 except ImportError:
     import simplejson as json
+
+try:
+    basestring
+except NameError:
+    basestring = str
 
 from base64 import b64encode
 
@@ -137,7 +143,7 @@ class Client(object):
 
         try:
             res = urlopen(req)
-            data = json.load(res.read())
+            data = json.loads(res) if isinstance(res, basestring) else json.loads(res.read())
 
             if self.verbose:
                 print('')
@@ -148,7 +154,7 @@ class Client(object):
                 print("==============================")
 
             return data
-        except HTTPError, e:
+        except HTTPError as e:
             raise Error("HTTP Request Error ({}): {}".format(url, e.reason))
 
 
@@ -156,8 +162,8 @@ class Configuration(object):
     DEFAULT_HOST = 'https://www.supersaas.com'
 
     def __init__(self):
-        self.account_name = ''
-        self.password = ''
-        self.host = self.DEFAULT_HOST
+        self.account_name = os.environ['SSS_API_ACCOUNT_NAME'] if 'SSS_API_ACCOUNT_NAME' in os.environ else ''
+        self.password = os.environ['SSS_API_PASSWORD'] if 'SSS_API_PASSWORD' in os.environ else ''
+        self.host = os.environ['SSS_API_HOST'] if 'SSS_API_HOST' in os.environ else self.DEFAULT_HOST
         self.dry_run = False
         self.verbose = False
