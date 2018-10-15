@@ -137,7 +137,7 @@ class Client(object):
 
         try:
             res = urlopen(req)
-            data = json.load(res.read())
+            data = json.load(res)
 
             if self.verbose:
                 print('')
