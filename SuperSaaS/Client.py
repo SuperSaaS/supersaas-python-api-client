@@ -153,7 +153,7 @@ class Client(object):
 
 
 class Configuration(object):
-    DEFAULT_HOST = 'http://localhost:3000'
+    DEFAULT_HOST = 'https://www.supersaas.com'
 
     def __init__(self):
         self.account_name = ''
