@@ -136,5 +136,7 @@ class Appointments(BaseApi):
     def __map_slots_or_bookings(self, obj, slot=False):
         if slot:
             return [Slot(attributes) for attributes in obj.get('slots', [])]
+        elif isinstance(obj, list):
+            return [Appointment(attributes) for attributes in obj]
         else:
             return [Appointment(attributes) for attributes in obj.get('bookings', [])]
