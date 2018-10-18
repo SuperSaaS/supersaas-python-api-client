@@ -102,9 +102,6 @@ class Client(object):
         }
 
         url = "{}/api{}.json".format(self.host, path)
-        if http_method == 'GET':
-            query = params
-            params = None
         if query:
             querystring = urlencode(query)
             url = "{}?{}".format(url, querystring)
