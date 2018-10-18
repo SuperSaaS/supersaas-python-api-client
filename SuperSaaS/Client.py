@@ -93,7 +93,7 @@ class Client(object):
         if not self.password:
             raise Error("Account password not configured. Call `SuperSaaS.Client.configure`.")
 
-        auth = b64encode('{}:{}'.format(self.account_name, self.password))
+        auth = b64encode('{}:{}'.format(self.account_name, self.password).encode())
         headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
