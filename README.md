@@ -7,7 +7,7 @@ The SuperSaaS API provides services that can be used to add online booking and s
 ## Prerequisites
 
 1. [Register for a (free) SuperSaaS account](https://www.supersaas.com/accounts/new), and
-2. get your account name and password. 
+2. get your account name and API key on the [Account Info](https://www.supersaas.com/accounts/edit) page. 
 
 ##### Dependencies
 
@@ -37,21 +37,21 @@ Initialize the SuperSaaS `Client` with authorization credentials:
     from SuperSaaS import Client
     Client.instance().configure(
         account_name = 'accnt'
-        password = 'pwd'
+        api_key = 'xxxxxxxxxxxxxxxxxxxxxx'
     )    
     
 > Note, ensure that `configure` is called before `instance`, otherwise the client will be initialized with configuration defaults.
 
-If the client isn't configured explicitly, it will use default `ENV` variables for the account name and password.
+If the client isn't configured explicitly, it will use default `ENV` variables for the account name and api key.
 
     ENV['SSS_API_ACCOUNT_NAME'] = 'your-env-supersaas-account-name'
-    ENV['SSS_API_PASSWORD'] = 'your-env-supersaas-account-name' 
+    ENV['SSS_API_KEY'] = 'your-env-supersaas-api-key' 
     Client.instance().account_name #=> 'your-env-supersaas-account-name'
-    Client.instance().password #=> 'your-env-supersaas-account-name'
+    Client.instance().api_key #=> 'your-env-supersaas-api-key'
     
 All configuration options can be individually set on the client.
 
-    Client.instance().password = 'pwd' 
+    Client.instance().api_key = 'xxxxxxxxxxxxxxxxxxxxxx' 
     Client.instance().verbose = true
     ...
 

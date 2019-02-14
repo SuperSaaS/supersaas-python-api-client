@@ -13,5 +13,5 @@ class SupersaasTest(unittest.TestCase):
         self.config = Configuration()
         self.client = Client(self.config)
         self.client.account_name = 'test'
-        self.client.password = 'test'
+        self.client.api_key = 'test'
         self.client.dry_run = True
