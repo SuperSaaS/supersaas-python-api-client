@@ -28,8 +28,8 @@ from .Error import Error
 
 PYTHON_VERSION = '.'.join([str(info) for info in sys.version_info])
 
-API_VERSION = '1'
-VERSION = '0.9.0'
+API_VERSION = '2'
+VERSION = '1.0.0'
 
 
 class Client(object):
@@ -45,9 +45,9 @@ class Client(object):
         return cls.__singleton_instance
 
     @classmethod
-    def configure(cls, account_name, password, dry_run=False, verbose=False, host=None):
+    def configure(cls, account_name, api_key, dry_run=False, verbose=False, host=None):
         cls.instance().account_name = account_name
-        cls.instance().password = password
+        cls.instance().api_key = api_key
         cls.instance().dry_run = dry_run
         cls.instance().verbose = verbose
         cls.instance().host = host or cls.instance().host
@@ -58,7 +58,7 @@ class Client(object):
 
     def __init__(self, configuration):
         self.account_name = configuration.account_name
-        self.password = configuration.password
+        self.api_key = configuration.api_key
         self.host = configuration.host
         self.dry_run = configuration.dry_run
         self.verbose = configuration.verbose
@@ -90,10 +90,10 @@ class Client(object):
 
         if not self.account_name:
             raise Error("Account name not configured. Call `SuperSaaS.Client.configure`.")
-        if not self.password:
-            raise Error("Account password not configured. Call `SuperSaaS.Client.configure`.")
+        if not self.api_key:
+            raise Error("Account api key not configured. Call `SuperSaaS.Client.configure`.")
 
-        auth = b64encode('{}:{}'.format(self.account_name, self.password).encode())
+        auth = b64encode('{}:{}'.format(self.account_name, self.api_key).encode())
         headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ class Configuration(object):
 
     def __init__(self):
         self.account_name = os.environ['SSS_API_ACCOUNT_NAME'] if 'SSS_API_ACCOUNT_NAME' in os.environ else ''
-        self.password = os.environ['SSS_API_PASSWORD'] if 'SSS_API_PASSWORD' in os.environ else ''
+        self.api_key = os.environ['SSS_API_KEY'] if 'SSS_API_KEY' in os.environ else ''
         self.host = os.environ['SSS_API_HOST'] if 'SSS_API_HOST' in os.environ else self.DEFAULT_HOST
         self.dry_run = False
         self.verbose = False

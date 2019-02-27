@@ -58,7 +58,6 @@ class AppointmentsTest(SupersaasTest):
             'description': 'Testing.',
             'name': 'Test',
             'email': 'test@example.com',
-            'password': 'pass123',
             'full_name': 'Tester Test',
             'address': '123 St, City',
             'mobile': '555-5555',

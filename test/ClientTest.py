@@ -14,6 +14,6 @@ class ClientTest(SupersaasTest):
             self.assertIsNotNone(self.client.request(method, '/test', {'test': True}))
 
     def test_instance_configuration(self):
-        self.client.configure(account_name='account', password='password')
+        self.client.configure(account_name='account', api_key='xxxxxxxxxxxxxxxxxxxxxx')
         self.assertEqual('account', SuperSaaS.Client.instance().account_name)
-        self.assertEqual('password', SuperSaaS.Client.instance().password)
+        self.assertEqual('xxxxxxxxxxxxxxxxxxxxxx', SuperSaaS.Client.instance().api_key)
