@@ -47,7 +47,7 @@ class Appointments(BaseApi):
         return self.__map_slots_or_bookings(res)
 
     def get(self, schedule_id, appointment_id=None):
-        query = {schedule_id: self._validate_id(schedule_id)}
+        query = {'schedule_id': self._validate_id(schedule_id)}
         path = "/bookings/{}".format(self._validate_id(appointment_id))
         res = self.client.get(path, query)
         return Appointment(res)
