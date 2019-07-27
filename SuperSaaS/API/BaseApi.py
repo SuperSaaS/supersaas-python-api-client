@@ -1,5 +1,5 @@
 import re
-import datetime
+from datetime import datetime
 from SuperSaaS.Error import Error
 
 
@@ -23,7 +23,7 @@ class BaseApi(object):
             return value
 
     def _validate_datetime(self, value):
-        if isinstance(value, datetime.datetime):
+        if isinstance(value, datetime):
             return value.strftime("%Y-%m-%d %H:%M:%S")
         elif isinstance(value, str) and self.DATETIME_REGEX.match(value):
             return value

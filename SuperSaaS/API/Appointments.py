@@ -85,7 +85,7 @@ class Appointments(BaseApi):
     def update(self, schedule_id, appointment_id, attributes, webhook=None):
         path = "/bookings/{}".format(self._validate_id(appointment_id))
         params = {
-            'schedule_id': schedule_id,
+            'schedule_id': self._validate_id(schedule_id),
             'webhook': webhook,
             'form': attributes.get('form', None),
             'booking': {
