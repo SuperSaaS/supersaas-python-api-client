@@ -36,7 +36,7 @@ Initialize the SuperSaaS `Client` with authorization credentials:
 
     from SuperSaaS import Client
     Client.instance().configure(
-        account_name = 'accnt'
+        account_name = 'account',
         api_key = 'xxxxxxxxxxxxxxxxxxxxxx'
     )    
     
@@ -52,7 +52,7 @@ If the client isn't configured explicitly, it will use default `ENV` variables f
 All configuration options can be individually set on the client.
 
     Client.instance().api_key = 'xxxxxxxxxxxxxxxxxxxxxx' 
-    Client.instance().verbose = true
+    Client.instance().verbose = True
     ...
 
 ## API Methods
@@ -103,7 +103,7 @@ Get a single user by `user_id`:
 
 Get all users with optional `form` and `limit`/`offset` pagination params:
 
-    Client.instance().users.list(form=false, limit=25, offset=0)
+    Client.instance().users.list(form=False, limit=25, offset=0)
 
 #### Create Appointment/Booking
 
@@ -133,7 +133,7 @@ Get a single appointment by `schedule_id` and `appointment_id`:
 
 List appointments by `schedule_id`, with `form` and `start_time` and `limit` view param:
 
-    Client.instance().appointments.list(schedule_id=12345, form=true, start_time=datetime.now(), limit=50)
+    Client.instance().appointments.list(schedule_id=12345, form=True, start_time=datetime.now(), limit=50)
 
 #### Get Agenda
 
@@ -153,19 +153,19 @@ _Note: only works for capacity type schedules._
 
 Get available appointments by `schedule_id`, with `from_time` time and `length_minutes` and `resource` params:
 
-    Client.instance().available(schedule_id12345, from_time='2018-1-31 00:00:00', length_minutes=15, resource='My Class')
+    Client.instance().appointments.available(schedule_id=12345, from_time='2018-01-31 00:00:00', length_minutes=15, resource='My Class')
 
 #### Get Recent Changes
 
 Get recently changed appointments by `schedule_id`, with `from_time` view param:
 
-    Client.instance().appointments.changes(schedule_id=12345, from_time='2018-1-31 00:00:00', true)
+    Client.instance().appointments.changes(schedule_id=12345, from_time='2018-01-31 00:00:00', True)
 
 #### Get Recent Changes Slots
 
 Get recently changed slot appointment by `schedule_id`, with `from_time` view params:
 
-    Client.instance().appointments.changes(schedule_id=12345, from_time='2018-1-31 00:00:00')
+    Client.instance().appointments.changes_slots(schedule_id=12345, from_time='2018-01-31 00:00:00')
 
 _Note: only works for capacity type schedules._
 
@@ -173,7 +173,7 @@ _Note: only works for capacity type schedules._
 
 Get all forms by template `superform_id`, with `from_time` param:
 
-    Client.instance().forms.list(superform_id=12345, from_time='2018-1-31 00:00:00')
+    Client.instance().forms.list(superform_id=12345, from_time='2018-01-31 00:00:00')
 
 #### Get Form
 
