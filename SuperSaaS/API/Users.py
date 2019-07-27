@@ -38,6 +38,7 @@ class Users(BaseApi):
                 'role': self._validate_options(attributes['role'], [3, 4, -1]) if attributes.get('role','') else None
             }
         }
+        params['user'] = dict(filter(lambda item: item[1] is not None, params['user'].items()))
         res = self.client.post(path, params, query)
         return User(res)
 
@@ -45,23 +46,24 @@ class Users(BaseApi):
         path = self.__user_path(user_id)
         query = {'webhook': 'true' if webhook else None}
         params = {
-            'webhook': attributes.get('webhook', ''),
+            'webhook': attributes.get('webhook', None),
             'user': {
-                'name': self._validate_present(attributes.get('name','')),
-                'email': attributes.get('email',''),
-                'password': attributes.get('password',''),
-                'full_name': attributes.get('full_name',''),
-                'address': attributes.get('address',''),
-                'mobile': attributes.get('mobile',''),
-                'phone': attributes.get('phone',''),
-                'country': attributes.get('country',''),
-                'field_1': attributes.get('field_1',''),
-                'field_2': attributes.get('field_2',''),
-                'super_field': attributes.get('super_field',''),
+                'name': attributes.get('name',''),
+                'email': attributes.get('email',None),
+                'password': attributes.get('password',None),
+                'full_name': attributes.get('full_name',None),
+                'address': attributes.get('address',None),
+                'mobile': attributes.get('mobile',None),
+                'phone': attributes.get('phone',None),
+                'country': attributes.get('country',None),
+                'field_1': attributes.get('field_1',None),
+                'field_2': attributes.get('field_2',None),
+                'super_field': attributes.get('super_field',None),
                 'credit': self._validate_number(attributes['credit']) if attributes.get('credit','') else None,
                 'role': self._validate_options(attributes['role'], [3, 4, -1]) if attributes.get('role','') else None
             }
         }
+        params['user'] = dict(filter(lambda item: item[1] is not None, params['user'].items()))
         return self.client.put(path, params, query)
 
     def delete(self, user_id):

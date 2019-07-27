@@ -103,6 +103,7 @@ class Client(object):
 
         url = "{}/api{}.json".format(self.host, path)
         if query:
+            query = dict(filter(lambda item: item[1] is not None, query.items()))
             querystring = urlencode(query)
             url = "{}?{}".format(url, querystring)
 
