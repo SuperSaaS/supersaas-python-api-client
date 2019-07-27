@@ -21,7 +21,7 @@ class Appointments(BaseApi):
             'slot': 'true'
         }
         res = self.client.get(path, query)
-        return self.__map_slots_or_bookings(res, True)
+        return self.__map_slots_or_bookings(res)
 
     def available(self, schedule_id, from_time=None, length_minutes=None, resource=None, full=None, limit=None):
         path = "/free/{}".format(self._validate_id(schedule_id))
@@ -33,7 +33,7 @@ class Appointments(BaseApi):
             'maxresults': self._validate_number(limit) if limit else None
         }
         res = self.client.get(path, query)
-        return self.__map_slots_or_bookings(res)
+        return self.__map_slots_or_bookings(res, True)
 
     def list(self, schedule_id, form=None, start_time=None, limit=None):
         path = "/bookings"
