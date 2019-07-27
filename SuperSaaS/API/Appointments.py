@@ -80,7 +80,7 @@ class Appointments(BaseApi):
         }
         params['booking'] = dict(filter(lambda item: item[1] is not None, params['booking'].items()))
         res = self.client.post(path, params)
-        return Appointment(res)
+        return {'location': res}
 
     def update(self, schedule_id, appointment_id, attributes, webhook=None):
         path = "/bookings/{}".format(self._validate_id(appointment_id))

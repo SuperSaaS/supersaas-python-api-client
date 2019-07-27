@@ -141,8 +141,10 @@ class Client(object):
 
         try:
             res = urlopen(req)
-            data = json.loads(res) if isinstance(res, basestring) else json.loads(res.read())
-
+            location = res.headers['Location'] if res.getcode() == 201 and http_method == 'POST' else None
+            val = res.read()
+            decoded_val = val.decode('utf-8')
+            data = location or (decoded_val if not decoded_val else json.loads(val))
             if self.verbose:
                 print('')
                 print("Response:")

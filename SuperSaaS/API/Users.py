@@ -40,7 +40,7 @@ class Users(BaseApi):
         }
         params['user'] = dict(filter(lambda item: item[1] is not None, params['user'].items()))
         res = self.client.post(path, params, query)
-        return User(res)
+        return {'location': res}
 
     def update(self, user_id, attributes, webhook=None):
         path = self.__user_path(user_id)
