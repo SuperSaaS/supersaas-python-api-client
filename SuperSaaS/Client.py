@@ -93,7 +93,7 @@ class Client(object):
         if not self.api_key:
             raise Error("Account api key not configured. Call `SuperSaaS.Client.configure`.")
 
-        auth = b64encode('{}:{}'.format(self.account_name, self.api_key).encode())
+        auth = b64encode('{}:{}'.format(self.account_name, self.api_key).encode()).decode()
         headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -109,7 +109,7 @@ class Client(object):
 
         if params:
             data = dict(filter(lambda item: item[1] is not None, params.items()))
-            data = json.dumps(data)
+            data = json.dumps(data).encode('utf-8')
         else:
             data = None
         req = Request(url, data, headers)
