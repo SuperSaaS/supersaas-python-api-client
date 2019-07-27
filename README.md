@@ -79,7 +79,7 @@ _Note: does not work for capacity type schedules._
 
 Create a user with user attributes params:
 
-    Client.instance().users.create(attributes={'full_name': 'Example Name', 'email': 'example@example.com, 'slot_id': 12345}, user_id=None, webhook=True)
+    Client.instance().users.create(attributes={'full_name': 'Example Name', 'email': 'example@example.com'}, user_id=None, webhook=True)
 
 #### Update User
 
@@ -109,13 +109,13 @@ Get all users with optional `form` and `limit`/`offset` pagination params:
 
 Create an appointment by `schedule_id` and `user_id` with appointment attributes and `form` and `webhook` params:
 
-    Client.instance().appointments.create(schedule_id=12345, user_id=67890, attributes={full_name: 'Example Name', email: 'example@example.com', slot_id: 12345}, form=True, webhook=True)
+    Client.instance().appointments.create(schedule_id=12345, user_id=67890, attributes={'full_name': 'Example Name', 'email': 'example@example.com', 'slot_id': 12345}, form=True, webhook=True)
 
 #### Update Appointment/Booking
 
 Update an appointment by `schedule_id` and `appointment_id` with appointment attributes params:
 
-    Client.instance().appointments.update(schedule_id=12345, appointment_id=67890, attributes={full_name: 'New Name'}, webhook=True)
+    Client.instance().appointments.update(schedule_id=12345, appointment_id=67890, attributes={'full_name': 'New Name'}, webhook=True)
 
 #### Delete Appointment/Booking
 
