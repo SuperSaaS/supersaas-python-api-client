@@ -114,13 +114,7 @@ class Client(object):
             data = None
         req = Request(url, data, headers)
 
-        if http_method == 'GET':
-            req.get_method = lambda: http_method
-        elif http_method == 'POST':
-            req.get_method = lambda: http_method
-        elif http_method == 'PUT':
-            req.get_method = lambda: http_method
-        elif http_method == 'DELETE':
+        if http_method in ['GET','POST','PUT','DELETE']:
             req.get_method = lambda: http_method
         else:
             raise Error("Invalid HTTP Method: {}. Only `GET`, `POST`, `PUT`, `DELETE` supported.".format(http_method))
@@ -143,8 +137,7 @@ class Client(object):
             res = urlopen(req)
             location = res.headers['Location'] if res.getcode() == 201 and http_method == 'POST' else None
             val = res.read()
-            decoded_val = val.decode('utf-8')
-            data = location or (decoded_val if not decoded_val else json.loads(val))
+            data = location or (val if not val else json.loads(val))
             if self.verbose:
                 print('')
                 print("Response:")
