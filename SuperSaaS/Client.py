@@ -93,7 +93,7 @@ class Client(object):
         if not self.api_key:
             raise Error("Account api key not configured. Call `SuperSaaS.Client.configure`.")
 
-        auth = b64encode('{}:{}'.format(self.account_name, self.api_key).encode())
+        auth = b64encode('{}:{}'.format(self.account_name, self.api_key).encode()).decode()
         headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -103,23 +103,18 @@ class Client(object):
 
         url = "{}/api{}.json".format(self.host, path)
         if query:
+            query = dict(filter(lambda item: item[1] is not None, query.items()))
             querystring = urlencode(query)
             url = "{}?{}".format(url, querystring)
 
         if params:
             data = dict(filter(lambda item: item[1] is not None, params.items()))
-            data = json.dumps(data)
+            data = json.dumps(data).encode('utf-8')
         else:
             data = None
         req = Request(url, data, headers)
 
-        if http_method == 'GET':
-            req.get_method = lambda: http_method
-        elif http_method == 'POST':
-            req.get_method = lambda: http_method
-        elif http_method == 'PUT':
-            req.get_method = lambda: http_method
-        elif http_method == 'DELETE':
+        if http_method in ['GET','POST','PUT','DELETE']:
             req.get_method = lambda: http_method
         else:
             raise Error("Invalid HTTP Method: {}. Only `GET`, `POST`, `PUT`, `DELETE` supported.".format(http_method))
@@ -140,8 +135,9 @@ class Client(object):
 
         try:
             res = urlopen(req)
-            data = json.loads(res) if isinstance(res, basestring) else json.loads(res.read())
-
+            location = res.headers['Location'] if res.getcode() == 201 and http_method == 'POST' else None
+            val = res.read()
+            data = location or (val if not val else json.loads(val))
             if self.verbose:
                 print('')
                 print("Response:")

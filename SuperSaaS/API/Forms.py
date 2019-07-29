@@ -11,10 +11,10 @@ class Forms(BaseApi):
         res = self.client.get(path, query)
         return Form(res)
 
-    def list(self, form_id, from_time=None):
+    def list(self, superform_id, from_time=None):
         path = "/forms"
         query = {
-            'form_id': self._validate_id(form_id)
+            'form_id': self._validate_id(superform_id)
         }
         if from_time:
             query['from_time'] = self._validate_datetime(from_time)

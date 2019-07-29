@@ -21,7 +21,7 @@ class Appointments(BaseApi):
             'slot': 'true'
         }
         res = self.client.get(path, query)
-        return self.__map_slots_or_bookings(res, True)
+        return self.__map_slots_or_bookings(res)
 
     def available(self, schedule_id, from_time=None, length_minutes=None, resource=None, full=None, limit=None):
         path = "/free/{}".format(self._validate_id(schedule_id))
@@ -33,7 +33,7 @@ class Appointments(BaseApi):
             'maxresults': self._validate_number(limit) if limit else None
         }
         res = self.client.get(path, query)
-        return self.__map_slots_or_bookings(res)
+        return self.__map_slots_or_bookings(res, True)
 
     def list(self, schedule_id, form=None, start_time=None, limit=None):
         path = "/bookings"
@@ -47,7 +47,7 @@ class Appointments(BaseApi):
         return self.__map_slots_or_bookings(res)
 
     def get(self, schedule_id, appointment_id=None):
-        query = {schedule_id: self._validate_id(schedule_id)}
+        query = {'schedule_id': self._validate_id(schedule_id)}
         path = "/bookings/{}".format(self._validate_id(appointment_id))
         res = self.client.get(path, query)
         return Appointment(res)
@@ -60,52 +60,54 @@ class Appointments(BaseApi):
             'user_id': self._validate_id(user_id),
             'form': form,
             'booking': {
-                'start': attributes.get('start', ''),
-                'finish': attributes.get('finish', ''),
-                'name': self._validate_present(attributes.get('name', '')),
-                'email': attributes.get('email', ''),
-                'full_name': attributes.get('full_name', ''),
-                'address': attributes.get('address', ''),
-                'mobile': attributes.get('mobile', ''),
-                'phone': attributes.get('phone', ''),
-                'country': attributes.get('country', ''),
-                'field_1': attributes.get('field_1', ''),
-                'field_2': attributes.get('field_2', ''),
-                'field_1_r': attributes.get('field_1_r', ''),
-                'field_2_r': attributes.get('field_2_r', ''),
-                'super_field': attributes.get('super_field', ''),
-                'resource_id': attributes.get('resource_id', ''),
-                'slot_id': attributes.get('slot_id', '')
+                'start': attributes.get('start', None),
+                'finish': attributes.get('finish', None),
+                'name': attributes.get('name', None),
+                'email': attributes.get('email', None),
+                'full_name': attributes.get('full_name', None),
+                'address': attributes.get('address', None),
+                'mobile': attributes.get('mobile', None),
+                'phone': attributes.get('phone', None),
+                'country': attributes.get('country', None),
+                'field_1': attributes.get('field_1', None),
+                'field_2': attributes.get('field_2', None),
+                'field_1_r': attributes.get('field_1_r', None),
+                'field_2_r': attributes.get('field_2_r', None),
+                'super_field': attributes.get('super_field', None),
+                'resource_id': attributes.get('resource_id', None),
+                'slot_id': attributes.get('slot_id', None)
             }
         }
+        params['booking'] = dict(filter(lambda item: item[1] is not None, params['booking'].items()))
         res = self.client.post(path, params)
-        return Appointment(res)
+        return {'location': res}
 
     def update(self, schedule_id, appointment_id, attributes, webhook=None):
         path = "/bookings/{}".format(self._validate_id(appointment_id))
         params = {
-            'schedule_id': schedule_id,
+            'schedule_id': self._validate_id(schedule_id),
             'webhook': webhook,
-            'form': attributes.get('form', ''),
+            'form': attributes.get('form', None),
             'booking': {
-                'start': attributes.get('start', ''),
-                'finish': attributes.get('finish', ''),
-                'name': self._validate_present(attributes.get('name', '')),
-                'email': attributes.get('email', ''),
-                'full_name': attributes.get('full_name', ''),
-                'address': attributes.get('address', ''),
-                'mobile': attributes.get('mobile', ''),
-                'phone': attributes.get('phone', ''),
-                'country': attributes.get('country', ''),
-                'field_1': attributes.get('field_1', ''),
-                'field_2': attributes.get('field_2', ''),
-                'field_1_r': attributes.get('field_1_r', ''),
-                'field_2_r': attributes.get('field_2_r', ''),
-                'super_field': attributes.get('super_field', ''),
-                'resource_id': attributes.get('resource_id', ''),
-                'slot_id': attributes.get('slot_id', '')
+                'start': attributes.get('start', None),
+                'finish': attributes.get('finish', None),
+                'name': attributes.get('name', ''),
+                'email': attributes.get('email', None),
+                'full_name': attributes.get('full_name', None),
+                'address': attributes.get('address', None),
+                'mobile': attributes.get('mobile', None),
+                'phone': attributes.get('phone', None),
+                'country': attributes.get('country', None),
+                'field_1': attributes.get('field_1', None),
+                'field_2': attributes.get('field_2', None),
+                'field_1_r': attributes.get('field_1_r', None),
+                'field_2_r': attributes.get('field_2_r', None),
+                'super_field': attributes.get('super_field', None),
+                'resource_id': attributes.get('resource_id', None),
+                'slot_id': attributes.get('slot_id', None)
             }
         }
+        params['booking'] = dict(filter(lambda item: item[1] is not None, params['booking'].items()))
         res = self.client.put(path, params)
         return Appointment(res)
 
