@@ -33,7 +33,7 @@ class Appointments(BaseApi):
             'maxresults': self._validate_number(limit) if limit else None
         }
         res = self.client.get(path, query)
-        return self.__map_slots_or_bookings(res, True)
+        return self.__map_slots_or_bookings(res)
 
     def list(self, schedule_id, form=None, start_time=None, limit=None):
         path = "/bookings"
@@ -133,12 +133,24 @@ class Appointments(BaseApi):
             'slot': 'true'
         }
         res = self.client.get(path, query)
-        return self.__map_slots_or_bookings(res, True)
+        return self.__map_slots_or_bookings(res)
 
-    def __map_slots_or_bookings(self, obj, slot=False):
-        if slot:
-            return [Slot(attributes) for attributes in obj.get('slots', [])]
-        elif isinstance(obj, list):
+    def range(self, schedule_id, today=False, from_time=None, to=None, slot=False):
+        path = "/range/{}".format(self._validate_id(schedule_id))
+        query = {
+                  'today': today if today else None,  
+                  'from': self._validate_datetime(from_time) if from_time else None,
+                  'to': self._validate_datetime(to) if to else None,
+                  'slot': slot if slot else None 
+        }
+        res = self.client.get(path, query)
+        return self.__map_slots_or_bookings(res)
+
+
+    def __map_slots_or_bookings(self, obj):
+        if isinstance(obj, list):
             return [Appointment(attributes) for attributes in obj]
+        elif 'slots' in obj:
+            return [Slot(attributes) for attributes in obj.get('slots', [])]
         else:
             return [Appointment(attributes) for attributes in obj.get('bookings', [])]

@@ -169,6 +169,12 @@ Get recently changed slot appointment by `schedule_id`, with `from_time` view pa
 
 _Note: only works for capacity type schedules._
 
+#### Get list of appointments
+
+Get list of appointments by `schedule_id`, with `today`, `from time`, `to` time and `slot` view param:
+
+    Client.instance().appointments.range(schedule_id=12345, today=True, from_time='2020-01-31 00:00:00',from_time='2020-02-01 00:00:00' slot=False)
+
 #### List Template Forms
 
 Get all forms by template `superform_id`, with `from_time` param:
@@ -191,7 +197,6 @@ The API Client raises a custom Error for HTTP errors and invalid input. Rescue f
         Client.instance().users.get
     except Error:
         # Handle error
-    end
 
 Validation errors are assigned to the response model. e.g.
 
@@ -206,9 +211,6 @@ Validation errors are assigned to the response model. e.g.
 + [Ruby API Client](https://github.com/SuperSaaS/supersaas-ruby-api-client)
 + [PHP API Client](https://github.com/SuperSaaS/supersaas-php-api-client)
 + [NodeJS API Client](https://github.com/SuperSaaS/supersaas-nodejs-api-client)
-+ [C# API Client](https://github.com/SuperSaaS/supersaas-csharp-api-client)
-+ [Objective-C API Client](https://github.com/SuperSaaS/supersaas-objc-api-client)
-+ [Go API Client](https://github.com/SuperSaaS/supersaas-go-api-client)
 
 Contact: [support@supersaas.com](mailto:support@supersaas.com)
 
