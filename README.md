@@ -211,9 +211,6 @@ Validation errors are assigned to the response model. e.g.
 + [Ruby API Client](https://github.com/SuperSaaS/supersaas-ruby-api-client)
 + [PHP API Client](https://github.com/SuperSaaS/supersaas-php-api-client)
 + [NodeJS API Client](https://github.com/SuperSaaS/supersaas-nodejs-api-client)
-+ [C# API Client](https://github.com/SuperSaaS/supersaas-csharp-api-client)
-+ [Objective-C API Client](https://github.com/SuperSaaS/supersaas-objc-api-client)
-+ [Go API Client](https://github.com/SuperSaaS/supersaas-go-api-client)
 
 Contact: [support@supersaas.com](mailto:support@supersaas.com)
 
