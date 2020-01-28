@@ -44,6 +44,11 @@ class AppointmentsTest(SupersaasTest):
         schedule_id = 12345
         self.assertIsNotNone(self.client.appointments.changes(schedule_id, "2017-01-31 14:30:00"))
 
+    def test_range():
+        schedule_id = 12345
+        self.assertIsNotNone(self.client.appointments.range(schedule_id, False, "2017-01-31 14:30:00"))
+
+
     def test_changes_slots(self):
         schedule_id = 12345
         self.assertIsNotNone(self.client.appointments.changes_slots(schedule_id, datetime.now()))
