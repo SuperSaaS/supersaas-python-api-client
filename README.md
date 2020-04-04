@@ -23,22 +23,47 @@ The SDK is available from PyPi and can be installed using pip, e.g.
 
 ## Configuration
 
-The `Client` can be used either (1) through the singleton helper method `instance`, e.g.
-    
-    Client.instance()
-    
-Or else by (2) simply creating a new client instance manually, e.g.
-    
-    config = Configuration()
-    client = Client(config)
+The SuperSaaS client can be created in two ways:
 
-Initialize the SuperSaaS `Client` with authorization credentials:
+1. Simply initialize a `Client()` instance
+2. Obtain the singleton instnace by calling the helper method
 
-    from SuperSaaS import Client
-    Client.instance().configure(
-        account_name = 'account',
-        api_key = 'xxxxxxxxxxxxxxxxxxxxxx'
-    )    
+### Creating a normal instance
+Simply create a new client instance manually:
+    
+```python
+from SuperSaaS import Client, Configuration
+
+# Initialize client with authorization credentials
+config = Configuration()
+
+client = Client(config)
+client.account_name = 'your_account_name'
+client.api_key = 'your_api_key'
+
+# Do API calls
+client.schedules.list()
+...
+```
+
+### Get(or create) the singleton instance
+Use the helper method `Client.instance()` to deal with the **singleton** instnace:
+
+```python
+from SuperSaaS import Client
+
+# Initialize the singleton with authorization credentials
+Client.instance().configure(
+    account_name = 'your_account_name',
+    api_key = 'your_api_key'
+)    
+
+# Do API calls
+Client.instance().schedules.list()
+...
+```
+
+### Configuring the client
     
 > Note, ensure that `configure` is called before `instance`, otherwise the client will be initialized with configuration defaults.
 
@@ -54,6 +79,16 @@ All configuration options can be individually set on the client.
     Client.instance().api_key = 'xxxxxxxxxxxxxxxxxxxxxx' 
     Client.instance().verbose = True
     ...
+
+Avaiable configuration options are:
+| Attribute | Default value | Descriptions |  |  |
+|----------------|----------------------------|-------------------------------------------------------------------------------------|---|---|
+| account_name | '' | Your account name |  |  |
+| api_key | '' | Your api key |  |  |
+| verbose | False | Whether to print the HTTP request/response data to console. For debugging purpose.  |  |  |
+| host | Configuration.DEFAULT_HOST | Server host. Normally you won't need to specify this. |  |  |
+
+For implementaion detail check the `Configuration()` class in  [SuperSaas/Client.py](SuperSaaS/Client.py)
 
 ## API Methods
 
