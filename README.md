@@ -47,7 +47,7 @@ client.schedules.list()
 ```
 
 ### Get(or create) the singleton instance
-Use the helper method `Client.instance()` to deal with the **singleton** instnace:
+Use the helper method `Client.instance()` to deal with the **singleton** instance:
 
 ```python
 from SuperSaaS import Client
