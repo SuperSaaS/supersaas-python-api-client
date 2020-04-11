@@ -75,7 +75,8 @@ class Appointments(BaseApi):
                 'field_2_r': attributes.get('field_2_r', None),
                 'super_field': attributes.get('super_field', None),
                 'resource_id': attributes.get('resource_id', None),
-                'slot_id': attributes.get('slot_id', None)
+                'slot_id': attributes.get('slot_id', None),
+                'description': attributes.get('description', None)
             }
         }
         params['booking'] = dict(filter(lambda item: item[1] is not None, params['booking'].items()))
@@ -104,7 +105,8 @@ class Appointments(BaseApi):
                 'field_2_r': attributes.get('field_2_r', None),
                 'super_field': attributes.get('super_field', None),
                 'resource_id': attributes.get('resource_id', None),
-                'slot_id': attributes.get('slot_id', None)
+                'slot_id': attributes.get('slot_id', None),
+                'description': attributes.get('description', None)
             }
         }
         params['booking'] = dict(filter(lambda item: item[1] is not None, params['booking'].items()))
