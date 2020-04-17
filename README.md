@@ -156,7 +156,7 @@ Update an appointment by `schedule_id` and `appointment_id` with appointment att
 
 Delete a single appointment by `schedule_id` and `appointment_id`:
 
-    Client.instance().appointments.delete(schedule_id=12345, appointment_id=67890)
+    Client.instance().appointments.delete(schedule_id=12345, appointment_id=67890, webhook=True)
 
 #### Get Appointment/Booking
 

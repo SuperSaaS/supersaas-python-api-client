@@ -29,7 +29,7 @@ from .Error import Error
 PYTHON_VERSION = '.'.join([str(info) for info in sys.version_info])
 
 API_VERSION = '2'
-VERSION = '1.2.1'
+VERSION = '1.2.2'
 
 
 class Client(object):
