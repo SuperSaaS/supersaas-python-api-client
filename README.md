@@ -11,7 +11,7 @@ The SuperSaaS API provides services that can be used to add online booking and s
 
 ##### Dependencies
 
-Python 2.7 or 3.*
+Python 3.*
 
 No external libraries. The supporting `urllib`/`urllib2` and `json`/`simplejson` standard libs are loaded conditionally.
 
@@ -252,6 +252,17 @@ Contact: [support@supersaas.com](mailto:support@supersaas.com)
 ## Releases
 
 The package follows [semantic versioning](https://semver.org/), i.e. MAJOR.MINOR.PATCH 
+
+## Development
+
+### Running tests
+Run the pytest command with the path to your test folder.
+
+    $ pytest test/*
+
+or with a specific file:
+
+    $ pytest test/AppointmentsTest.py
 
 ## License
 
