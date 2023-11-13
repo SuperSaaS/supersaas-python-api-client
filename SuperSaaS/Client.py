@@ -31,6 +31,27 @@ PYTHON_VERSION = '.'.join([str(info) for info in sys.version_info])
 API_VERSION = '2'
 VERSION = '1.2.2'
 
+import time
+
+
+
+
+class RateLimiter:
+    # The rate limiter allows a maximum of 4 requests to be made within the specified time window, which is defined by the WINDOW_SIZE constant
+    WINDOW_SIZE = 1
+    MAX_PER_WINDOW = 4
+
+    def __init__(self):
+        self.queue = []
+
+    def throttle(self):
+        # Represents the timestamp of the oldest request within the time window
+        oldest_request = self.queue.pop() if self.queue else None
+        # Push the current timestamp into the queue
+        self.queue.append(time.time())
+        # This ensures that the client does not make requests faster than the defined rate limit
+        if oldest_request and (time_elapsed := time.time() - oldest_request) < self.WINDOW_SIZE:
+            time.sleep(self.WINDOW_SIZE - time_elapsed)
 
 class Client(object):
     __singleton_lock = threading.Lock()
@@ -69,6 +90,7 @@ class Client(object):
         self.users = API.Users(self)
 
         self.last_request = None
+        self.rate_limiter = RateLimiter()
 
     def get(self, path, query=None):
         return self.request('GET', path, None, query)
@@ -83,6 +105,7 @@ class Client(object):
         return self.request('DELETE', path, params, query)
 
     def request(self, http_method, path, params=None, query=None):
+        self.rate_limiter.throttle()
         if params is None:
             params = {}
         if query is None:
