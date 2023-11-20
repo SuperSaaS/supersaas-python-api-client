@@ -42,7 +42,7 @@ class RateLimiter:
     MAX_PER_WINDOW = 4
 
     def __init__(self):
-        self.queue = []
+        self.queue = [None] * self.MAX_PER_WINDOW
 
     def throttle(self):
         # Represents the timestamp of the oldest request within the time window
