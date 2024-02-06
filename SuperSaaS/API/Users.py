@@ -1,6 +1,6 @@
 from .BaseApi import BaseApi
 from ..Models.User import User
-
+from ..Models.FieldList import FieldList
 
 class Users(BaseApi):
     def get(self, user_id=None):
@@ -18,9 +18,11 @@ class Users(BaseApi):
         res = self.client.get(path, query)
         return [User(attributes) for attributes in res]
 
-    def create(self, attributes, user_id=None, webhook=None):
+    def create(self, attributes, user_id=None, webhook=None, duplicate=None):
         path = self.__user_path(user_id)
         query = {'webhook': 'true' if webhook else None}
+        if duplicate:
+            query['duplicate'] = self._validate_duplicate(duplicate)
         params = {
             'user': {
                 'name': self._validate_present(attributes.get('name','')),
@@ -42,9 +44,11 @@ class Users(BaseApi):
         res = self.client.post(path, params, query)
         return {'location': res}
 
-    def update(self, user_id, attributes, webhook=None):
+    def update(self, user_id, attributes, webhook=None, notfound=None):
         path = self.__user_path(user_id)
         query = {'webhook': 'true' if webhook else None}
+        if notfound:
+            query['notfound'] = self._validate_notfound(notfound)
         params = {
             'webhook': attributes.get('webhook', None),
             'user': {
@@ -69,6 +73,11 @@ class Users(BaseApi):
     def delete(self, user_id):
         path = self.__user_path(self._validate_id(user_id))
         return self.client.delete(path)
+
+    def field_list(self):
+        path = '/field_list'
+        res = self.client.get(path)
+        return [FieldList(attributes) for attributes in res]
 
     def __user_path(self, user_id=None):
         return "/users/{}".format(user_id) if user_id else "/users"

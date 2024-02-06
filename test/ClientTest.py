@@ -19,7 +19,7 @@ class ClientTest(SupersaasTest):
         self.assertEqual('account', SuperSaaS.Client.instance().account_name)
         self.assertEqual('xxxxxxxxxxxxxxxxxxxxxx', SuperSaaS.Client.instance().api_key)
 
-    @unittest.skipIf(os.environ.get('RUN_RATE_LIMITER_TEST') != 'true', "Skipping RateLimiter test")
+    @unittest.skipIf(os.environ.get('SSS_PYTHON_RATE_LIMITER_TEST') != 'true', "Skipping RateLimiter test")
     def test_rate_limit(self):
         start_time = time.time()
         # Simulate making 21 requests within the same second

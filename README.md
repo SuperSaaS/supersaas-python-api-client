@@ -255,8 +255,11 @@ The package follows [semantic versioning](https://semver.org/), i.e. MAJOR.MINOR
 
 ## Development
 
+### Examples
+Do not run the examples blindly nor against your production database. They can have destructive effects, so please thread carefully.
+
 ### Running tests
-Run the pytest command with the path to your test folder.
+Run the pytest command with the path to your test folder. If you run into caching issues, then you either have to turn off the caching for tests or delete `__pycache__` in the test folder. If you wish to run the rate limiter test, you need to set the `SSS_PYTHON_RATE_LIMITER_TEST` environmental variable to `true`. Run all tests:
 
     $ pytest test/*
 

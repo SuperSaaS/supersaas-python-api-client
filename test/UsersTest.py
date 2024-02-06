@@ -20,9 +20,17 @@ class UsersTest(SupersaasTest):
         user_fk = '6789fk'
         self.assertIsNotNone(self.client.users.create(self.__user_attributes(), user_fk))
 
+    def test_create_all(self):
+        user_fk = '6789fk'
+        self.assertIsNotNone(self.client.users.create(self.__user_attributes(), user_fk, True, 'ignore'))
+
     def test_update(self):
         user_id = 12345
         self.assertIsNotNone(self.client.users.update(user_id, self.__user_attributes()))
+
+    def test_update_all(self):
+        user_id = 12345
+        self.assertIsNotNone(self.client.users.update(user_id, self.__user_attributes(), True, 'error'))
 
     def test_delete(self):
         user_id = 12345

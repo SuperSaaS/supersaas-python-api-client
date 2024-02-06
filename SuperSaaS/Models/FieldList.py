@@ -1,4 +1,4 @@
 from .BaseModel import BaseModel
 
-class Appointment(BaseModel):
+class FieldList(BaseModel):
     pass

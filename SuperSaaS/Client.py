@@ -28,13 +28,10 @@ from .Error import Error
 
 PYTHON_VERSION = '.'.join([str(info) for info in sys.version_info])
 
-API_VERSION = '2'
-VERSION = '1.2.2'
+API_VERSION = '3'
+VERSION = '2.0.0'
 
 import time
-
-
-
 
 class RateLimiter:
     # The rate limiter allows a maximum of 4 requests to be made within the specified time window, which is defined by the WINDOW_SIZE constant
@@ -88,6 +85,8 @@ class Client(object):
         self.forms = API.Forms(self)
         self.schedules = API.Schedules(self)
         self.users = API.Users(self)
+        self.groups = API.Groups(self)
+        self.promotions = API.Promotions(self)
 
         self.last_request = None
         self.rate_limiter = RateLimiter()
@@ -171,7 +170,7 @@ class Client(object):
 
             return data
         except HTTPError as e:
-            raise Error("HTTP Request Error ({}): {}".format(url, e.reason))
+            raise Error("HTTP Request Error: {}, ({})".format(e.reason, url))
 
 
 class Configuration(object):

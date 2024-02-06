@@ -4,12 +4,14 @@ from ..Models.Slot import Slot
 
 
 class Appointments(BaseApi):
-    def agenda(self, schedule_id, user_id, from_time=None):
+    def agenda(self, schedule_id, user_id, from_time=None, slot=False):
         path = "/agenda/{}".format(self._validate_id(schedule_id))
         query = {
             'user': self._validate_present(user_id),
             'from': self._validate_datetime(from_time) if from_time else None
         }
+        if slot:
+            query['slot'] = True
         res = self.client.get(path, query)
         return self.__map_slots_or_bookings(res)
 
@@ -83,16 +85,14 @@ class Appointments(BaseApi):
         res = self.client.post(path, params)
         return {'location': res}
 
-    def update(self, schedule_id, appointment_id, attributes, webhook=None):
+    def update(self, schedule_id, appointment_id, attributes, form=None, webhook=None):
         path = "/bookings/{}".format(self._validate_id(appointment_id))
         params = {
             'schedule_id': self._validate_id(schedule_id),
-            'webhook': webhook,
-            'form': attributes.get('form', None),
             'booking': {
                 'start': attributes.get('start', None),
                 'finish': attributes.get('finish', None),
-                'name': attributes.get('name', ''),
+                'name': attributes.get('name', None),
                 'email': attributes.get('email', None),
                 'full_name': attributes.get('full_name', None),
                 'address': attributes.get('address', None),
@@ -109,6 +109,10 @@ class Appointments(BaseApi):
                 'description': attributes.get('description', None)
             }
         }
+        if form:
+            params['form'] = form
+        if webhook:
+            params['webhook'] = webhook
         params['booking'] = dict(filter(lambda item: item[1] is not None, params['booking'].items()))
         res = self.client.put(path, params)
         return Appointment(res)
@@ -123,14 +127,13 @@ class Appointments(BaseApi):
         }
         return self.client.delete(path, params, query)
 
-    def changes(self, schedule_id, from_time=None):
+    def changes(self, schedule_id, from_time=None, to=None, slot=False, user=None, limit=None, offset=None):
         path = "/changes/{}".format(self._validate_id(schedule_id))
-        query = {
-            'from': self._validate_datetime(from_time) if from_time else None
-        }
-        res = self.client.get(path, query)
+        params = self.__build_param({}, from_time, to, slot, user, limit, offset)
+        res = self.client.get(path, params)
         return self.__map_slots_or_bookings(res)
 
+    # This is a legacy method, please use the changes method
     def changes_slots(self, schedule_id, from_time=None):
         path = "/changes/{}".format(self._validate_id(schedule_id))
         query = {
@@ -140,17 +143,15 @@ class Appointments(BaseApi):
         res = self.client.get(path, query)
         return self.__map_slots_or_bookings(res)
 
-    def range(self, schedule_id, today=False, from_time=None, to=None, slot=False):
+    def range(self, schedule_id, today=False, from_time=None, to=None, slot=False, user=None,
+              resource_id=None, service_id=None, limit=None, offset=None):
         path = "/range/{}".format(self._validate_id(schedule_id))
-        query = {
-                  'today': today if today else None,  
-                  'from': self._validate_datetime(from_time) if from_time else None,
-                  'to': self._validate_datetime(to) if to else None,
-                  'slot': slot if slot else None 
-        }
-        res = self.client.get(path, query)
+        params = {}
+        params = self.__build_param(params, from_time, to, slot, user, limit, offset, resource_id, service_id)
+        if today:
+            params['today'] = True
+        res = self.client.get(path, params)
         return self.__map_slots_or_bookings(res)
-
 
     def __map_slots_or_bookings(self, obj):
         if isinstance(obj, list):
@@ -159,3 +160,23 @@ class Appointments(BaseApi):
             return [Slot(attributes) for attributes in obj.get('slots', [])]
         else:
             return [Appointment(attributes) for attributes in obj.get('bookings', [])]
+
+    def __build_param(self, params, from_time, to, slot, user, limit, offset, resource_id=None, service_id=None):
+        if from_time:
+            params['from'] = self._validate_datetime(from_time)
+        if to:
+            params['to'] = self._validate_datetime(to)
+        if slot:
+            params['slot'] = True
+        if user or user == 0:
+            params['user'] = self._validate_user(user)
+        if limit:
+            params['limit'] = self._validate_number(limit)
+        if offset:
+            params['offset'] = self._validate_number(offset)
+        if resource_id is not None:
+            params['resource_id'] = self._validate_id(resource_id)
+        if service_id is not None:
+            params['service_id'] = self._validate_id(service_id)
+
+        return params

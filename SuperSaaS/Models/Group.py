@@ -1,4 +1,4 @@
 from .BaseModel import BaseModel
 
-class Slot(BaseModel):
+class Group(BaseModel):
     pass
