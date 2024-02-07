@@ -110,45 +110,69 @@ Get all services/resources by `schedule_id`:
 
 _Note: does not work for capacity type schedules._
 
+#### List Fields of a Schedule
+
+Get all the available fields of a schedule by `schedule_id`:
+
+    Client.instance().schedules.field_list(12345)
+
 #### Create User
 
-Create a user with user attributes params:
+Create a user with user attributes params `create(attributes, user_id=None, webhook=None, duplicate=None)`.
+If webhook=true is present it will trigger any webhooks connected to the account.
+To avoid a ‘create’ action from being automatically interpreted as an ‘update’, you can add the parameter duplicate=raise, then error `422 Unprocessable Entity` will be raised.
+If in your database your user has id 1234 then you can supply a foreign key in format 1234fk in `user_id` (optional) which you can use to identify user:
+If validation fails for any field then error `422 Unprocessable Entity` will be raised.
+Data fields that you can supply can be found [here.](https://www.supersaas.com/info/dev/user_api)
 
-    Client.instance().users.create(attributes={'full_name': 'Example Name', 'email': 'example@example.com'}, user_id=None, webhook=True)
+    Client.instance().users.create(attributes={'name': 'name@name.com', 'full_name': 'Example Name', 'email': 'example@example.com'}, user_id=None, webhook=True)
 
 #### Update User
 
-Update a user by `user_id` with user attributes params:
+Update a user by `user_id` with user attributes params `update(user_id, attributes, webhook=None, notfound=None)`.
+If webhook=true is present it will trigger any webhooks connected to the account.
+To avoid automatically creating a new record, you can add the parameter notfound=error or notfound=ignore to return a 404 Not Found or 200 OK respectively.
+If the `user_id` does not exist 404 error will be raised.
+You only need to specify the attributes you wish to update:
 
-    Client.instance().users.update(user_id=12345, attributes={'full_name': 'New Name'})
+    Client.instance().users.update(user_id=12345, attributes={'full_name': 'New Name'}, true, "ignore")
 
 #### Delete User
 
-Delete a single user by `user_id`:
+Delete a single user by `user_id`, and if the user does not exist 404 error will be raised.:
 
     Client.instance().users.delete(user_id=12345)
     
 #### Get User
 
-Get a single user by `user_id`:
+Get a single user by `user_id`, and if the user does not exist 404 error will be raised:
 
     Client.instance().users.get(user_id=12345)
 
 #### List Users
 
-Get all users with optional `form` and `limit`/`offset` pagination params:
+Get all users with optional `form` and `limit`/`offset` pagination params, `list(form=None, limit=None, offset=None)`.
+User can have a form attached, and setting `form=True` shows the data:
 
     Client.instance().users.list(form=False, limit=25, offset=0)
 
+#### List Fields of User object
+
+Get all the fields available to user object:
+
+    Client.instance().users.field_list
+
 #### Create Appointment/Booking
 
-Create an appointment by `schedule_id` and `user_id` with appointment attributes and `form` and `webhook` params:
+Create an appointment with `schedule_id`, and `user_id(optional)` (see API documentation on [create new](https://www.supersaas.com/info/dev/appointment_api#bookings_api)) appointment attributes and optional `form` and `webhook` params,
+`create(schedule_id, user_id, attributes, form=None, webhook=None)`:
 
     Client.instance().appointments.create(schedule_id=12345, user_id=67890, attributes={'full_name': 'Example Name', 'email': 'example@example.com', 'slot_id': 12345}, form=True, webhook=True)
 
 #### Update Appointment/Booking
 
-Update an appointment by `schedule_id` and `appointment_id` with appointment attributes params:
+Update an appointment by `schedule_id` and `appointment_id` with appointment attributes, see the above link,
+`update(schedule_id, appointment_id, attributes, form=None, webhook=None)`:
 
     Client.instance().appointments.update(schedule_id=12345, appointment_id=67890, attributes={'full_name': 'New Name'}, webhook=True)
 
@@ -166,19 +190,21 @@ Get a single appointment by `schedule_id` and `appointment_id`:
 
 #### List Appointments/Bookings
 
-List appointments by `schedule_id`, with `form` and `start_time` and `limit` view param:
+List appointments by `schedule_id`, with `form` and `start_time` and `limit` view params `list(schedule_id, form=None, start_time=None, limit=None)`:
 
     Client.instance().appointments.list(schedule_id=12345, form=True, start_time=datetime.now(), limit=50)
 
 #### Get Agenda
 
-Get agenda (upcoming) appointments by `schedule_id` and `user_id`, with `from_time` view param:
+Get agenda (upcoming) appointments by `schedule_id` and `user_id`, with `from_time` view param ([see](https://www.supersaas.com/info/dev/appointment_api#agenda),
+`agenda(schedule_id, user_id, from_time=None, slot=False)`:
 
     Client.instance().appointments.agenda(schedule_id=12345, user_id=67890, from_time=datetime.now())
 
 #### Get Agenda Slots
 
-Get agenda (upcoming) slots by `schedule_id` and `user_id`, with `from_time` view param:
+Get agenda (upcoming) slots by `schedule_id` and `user_id`, with `from_time` view param,
+`agenda_slots(schedule_id, user_id, from_time=None)`:
 
     Client.instance().appointments.agenda_slots(schedule_id=12345, user_id=67890, from_time=datetime.now())
 
@@ -186,13 +212,15 @@ _Note: only works for capacity type schedules._
 
 #### Get Available Appointments/Bookings
 
-Get available appointments by `schedule_id`, with `from_time` time and `length_minutes` and `resource` params:
+Get available appointments by `schedule_id`, with `from_time` time and `length_minutes` and `resource` params ([see](https://www.supersaas.com/info/dev/appointment_api#availability_api),
+`available(schedule_id, from_time=None, length_minutes=None, resource=None, full=None, limit=None)`:
 
     Client.instance().appointments.available(schedule_id=12345, from_time='2018-01-31 00:00:00', length_minutes=15, resource='My Class')
 
 #### Get Recent Changes
 
-Get recently changed appointments by `schedule_id`, with `from_time` view param:
+Get recently changed appointments by `schedule_id`, with `from_time` time, `to` time, `user` user, `slot` view params (see [docs](https://www.supersaas.com/info/dev/appointment_api#recent_changes)),
+`changes(schedule_id, from_time=None, to=None, slot=False, user=None, limit=None, offset=None)`:
 
     Client.instance().appointments.changes(schedule_id=12345, from_time='2018-01-31 00:00:00', True)
 
@@ -204,24 +232,58 @@ Get recently changed slot appointment by `schedule_id`, with `from_time` view pa
 
 _Note: only works for capacity type schedules._
 
-#### Get list of appointments
+#### Get range of appointments
 
-Get list of appointments by `schedule_id`, with `today`, `from time`, `to` time and `slot` view param:
+Get range of appointments by `schedule_id`, with `today`,`from_time`, `to` time and `slot` view params (see [docs](https://www.supersaas.com/info/dev/appointment_api#range)),
+`range(schedule_id, today=False, from_time=None, to=None, slot=False, user=None, resource_id=None, service_id=None, limit=None, offset=None)`:
 
     Client.instance().appointments.range(schedule_id=12345, today=True, from_time='2020-01-31 00:00:00',to='2020-02-01 00:00:00' slot=False)
 
 #### List Template Forms
 
-Get all forms by template `superform_id`, with `from_time` param:
+Get all forms by template `superform_id`, with `from_time`, and `user` params ([see](https://www.supersaas.com/info/dev/form_api)),
+`list(superform_id, from_time=None, user=None)`:
 
     Client.instance().forms.list(superform_id=12345, from_time='2018-01-31 00:00:00')
 
+#### Get a list of SuperForms
+
+Get a list of Form templates (SuperForms):
+
+    Client.instance().forms.forms
+
 #### Get Form
 
-Get a single form by `form_id`:
+Get a single form by `form_id`, will raise 404 error if not found:
 
     Client.instance().forms.get(form_id=12345)
-    
+
+#### List Promotions
+
+Get a list of promotional coupon codes with pagination parameters `limit` and `offset` (see [docs](https://www.supersaas.com/info/dev/promotion_api)),
+`list(limit=None, offset=None)`:
+
+    Client.instance().promotions.list
+
+#### Get a single coupon code
+
+Retrieve information about a single coupon code use with `promotion_code`:
+
+    Client.instance().promotions.promotion(12345)
+
+#### Duplicate promotion code
+
+Duplicate a template promotion by giving (new) `promotion_code` and `template_code` in that order,
+`duplicate_promotion_code(self, promotion_code, template_code)`:
+
+    Client.instance().promotions.duplicate_promotion_code(12345, 94832838)
+
+#### List Groups in an account
+
+List Groups in an account ([see](https://www.supersaas.com/info/dev/information_api)):
+
+    Client.instance().groups.list
+
 ## Error Handling
 
 The API Client raises a custom Error for HTTP errors and invalid input. Rescue from `SuperSaaS.Error` when making API requests. e.g.
@@ -255,8 +317,11 @@ The package follows [semantic versioning](https://semver.org/), i.e. MAJOR.MINOR
 
 ## Development
 
+### Examples
+Do not run the examples blindly nor against your production database. They can have destructive effects, so please thread carefully.
+
 ### Running tests
-Run the pytest command with the path to your test folder.
+Run the pytest command with the path to your test folder. If you run into caching issues, then you either have to turn off the caching for tests or delete `__pycache__` in the test folder. If you wish to run the rate limiter test, you need to set the `SSS_PYTHON_RATE_LIMITER_TEST` environmental variable to `true`. Run all tests:
 
     $ pytest test/*
 
