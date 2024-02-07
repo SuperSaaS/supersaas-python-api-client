@@ -7,14 +7,20 @@ from SuperSaaS import Client
 print("# SuperSaaS Appointments Example")
 
 if not (Client.instance().account_name and Client.instance().api_key):
-    print("ERROR! Missing account credentials. Rerun the script with your credentials, e.g.")
-    print("    SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<myapikey> python3 ./examples/appointments.py")
+    print(
+        "ERROR! Missing account credentials. Rerun the script with your credentials, e.g."
+    )
+    print(
+        "    SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<myapikey> python3 ./examples/appointments.py"
+    )
     exit()
 
 Client.instance().verbose = True
 
 if not 'SSS_API_SCHEDULE' in os.environ:
-    print("ERROR! Missing schedule id. Rerun the script with your schedule id, e.g.")
+    print(
+        "ERROR! Missing schedule id. Rerun the script with your schedule id, e.g."
+    )
     print("    SSS_API_SCHEDULE=<scheduleid> ./examples/appointments.py")
     exit()
 
@@ -28,11 +34,10 @@ if 'SSS_API_USER' not in os.environ:
         'full_name': 'Example',
         'name': 'example@example.com',
         'email': 'example@example.com',
-        'api_key': 'example'
     }
 
     user = Client.instance().users.create(params)
-    match = re.search(r'users/(\d+)\.json', user)
+    match = re.search(r'users/(\d+)\.json', user.get('location', ''))
     if match:
         user_id = match.group(1)
         print(f"#New user created {user_id}")
@@ -60,24 +65,33 @@ if user_id:
         params['finish'] = start_time + timedelta(hours=1)
 
     print("creating new appointment...")
-    print(f"#### SupersaasClient.instance().appointments.create({schedule_id}, {user_id}, {params})")
+    print(
+        f"#### SupersaasClient.instance().appointments.create({schedule_id}, {user_id}, {params})"
+    )
     # Assuming SupersaasClient has a similar API in Python
     Client.instance().appointments.create(schedule_id, user_id, params)
 else:
-    print("skipping create/update/delete (NO DESTRUCTIVE ACTIONS FOR SCHEDULE DATA)...")
+    print(
+        "skipping create/update/delete (NO DESTRUCTIVE ACTIONS FOR SCHEDULE DATA)..."
+    )
 
 if 'SSS_API_USER' in os.environ:
     user_id = os.environ['SSS_API_USER']
     print("listing agenda...")
     if 'SSS_SLOT' in os.environ:
-        print("#### Client.instance.appointments.agenda_slots({}, '{}')".format(schedule_id, user_id))
-        changes = Client.instance().appointments.agenda_slots(schedule_id, user_id)
+        print(
+            "#### Client.instance.appointments.agenda_slots({}, '{}')".format(
+                schedule_id, user_id))
+        changes = Client.instance().appointments.agenda_slots(
+            schedule_id, user_id)
     else:
-        print("#### Client.instance.appointments.agenda({}, '{}')".format(schedule_id, user_id))
+        print("#### Client.instance.appointments.agenda({}, '{}')".format(
+            schedule_id, user_id))
         changes = Client.instance().appointments.agenda(schedule_id, user_id)
 
 print("listing appointments...")
-print("#### Client.instance().appointments.list({}, nil, nil, 25)".format(schedule_id))
+print("#### Client.instance().appointments.list({}, nil, nil, 25)".format(
+    schedule_id))
 
 appointments = Client.instance().appointments.list(schedule_id, None, None, 25)
 
@@ -85,35 +99,47 @@ appointments = Client.instance().appointments.list(schedule_id, None, None, 25)
 if len(appointments) > 0:
     appointment_id = random.choice(appointments).id
     print("getting appointment...")
-    print(f"#### SupersaasClient.instance.appointments.get({appointment_id})")
+    print(f"#### Client.instance().appointments.get({appointment_id})")
     Client.instance().appointments.get(schedule_id, appointment_id)
 
 print("listing changes...")
 from_time = datetime.now() - timedelta(days=120)
-to_time = datetime.now() + timedelta(days=5000)  # Adjusted for simplicity
 
 print("listing changes...")
 if 'SSS_SLOT' in os.environ:
-    print("Legacy call, you can achieve the same by using changes with the slot variable as True, see docs")
-    print("#### Client.instance.appointments.changes_slots({}, '{}')\n\r".format(schedule_id, datetime.now()))
+    print(
+        "Legacy call, you can achieve the same by using changes with the slot variable as True, see docs"
+    )
+    print(
+        f"#### Client.instance.appointments.changes_slots({schedule_id}, '{datetime.now()}')"
+         )
     Client.instance().appointments.changes_slots(schedule_id, datetime.now())
-    print("Instead of the above you can use changes ike this to achieve the same")
-    changes = Client.instance().appointments.changes(schedule_id, from_time, to_time, True)
+    print(
+        "Instead of the above you can use changes ike this to achieve the same"
+    )
+    changes = Client.instance().appointments.changes(schedule_id, from_time,
+                                                     None, True)
 else:
     print(
-        f"#### SupersaasClient.instance.appointments.changes({schedule_id}, '{from_time}', '{to_time}', {True or 'false'})")
-    Client.instance().appointments.changes(schedule_id, from_time, to_time, False)
+        f"#### Client.instance().appointments.changes({schedule_id}, '{from_time}', '{None}', {True or 'false'})"
+    )
+    Client.instance().appointments.changes(schedule_id, from_time, None,
+                                           False)
 
 print("listing available...")
 from_time = datetime.now()
-print(f"#### SupersaasClient.instance.appointments.available({schedule_id}, '{from_time}')")
+print(
+    f"#### Client.instance().appointments.available({schedule_id}, '{from_time}')"
+)
 Client.instance().appointments.available(schedule_id, from_time)
 
 print("Appointments for a single user...")
 users = Client.instance().users.list(None, 1)
 if users:
     user = users[0]
-    print(f"#### SupersaasClient.instance.appointments.agenda({schedule_id}, {user.id}, '{from_time}')")
+    print(
+        f"#### Client.instance().appointments.agenda({schedule_id}, {user.id}, '{from_time}')"
+    )
     Client.instance().appointments.agenda(schedule_id, user.id, from_time)
 
 # Update and delete appointments, this part is commented out as it is quite destructive
@@ -121,11 +147,11 @@ if users:
 #     print(f"{description} == {appointment.description}")
 #     if description == appointment.description:
 #         print("updating appointment...")
-#         print(f"#### SupersaasClient.instance.appointments.update({schedule_id}, {appointment.id}, {{...}})")
+#         print(f"#### Client.instance().appointments.update({schedule_id}, {appointment.id}, {{...}})")
 #         Client.instance().appointments.update(schedule_id, appointment.id, {'country': 'FR', 'address': 'Rue 1'})
 #
 #     print("deleting appointment...")
-#     print(f"#### SupersaasClient.instance.appointments.delete({schedule_id}, {appointment.id})")
+#     print(f"#### Client.instance().appointments.delete({schedule_id}, {appointment.id})")
 #     Client.instance().appointments.delete(schedule_id, appointment.id)
 #     break
 
@@ -133,16 +159,15 @@ if user_id:
     print("Get agenda for a single user")
     agenda = Client.instance().appointments.agenda(schedule_id, user_id)
 
-print("Get available slots or bookings, you can also for availability from the future with from_time, length of booking and add a resource if required")
+print(
+    "Get available slots or bookings, you can also for availability from the future with from_time, length of booking and add a resource if required"
+)
 bookings = Client.instance().appointments.available(schedule_id)
 
-print("This API allows you to retrieve all appointments or slots from a schedule within a time range. There are plenty of paramters to help you narrow down your search, please refer to the docs for more information")
-range  = Client.instance().appointments.range(schedule_id)
-
-# if user_id:
-#     print("Creating a new appointment works similarly to update above, you might need to add a slot_id or start/finish time see docs for schedule types")
-#     attributes = { 'full_name': 'Mr Tester', 'email': 'test@me.com', 'phone': '555-555-5555'}
-#     appointment = Client.instance().appointments.create(schedule_id, user_id, attributes)
+print(
+    "This API allows you to retrieve all appointments or slots from a schedule within a time range. There are plenty of paramters to help you narrow down your search, please refer to the docs for more information"
+)
+range = Client.instance().appointments.range(schedule_id)
 
 # Delete user based on environment variable condition
 if not os.environ.get('SSS_API_USER'):

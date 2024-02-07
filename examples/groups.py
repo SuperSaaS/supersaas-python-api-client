@@ -7,8 +7,12 @@ print("# SuperSaaS Groups Example")
 client = Client.instance()
 
 if not (client.account_name and client.api_key):
-    print("ERROR! Missing account credentials. Rerun the script with your credentials, e.g.")
-    print("    SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<myapikey> ./examples/forms.py")
+    print(
+        "ERROR! Missing account credentials. Rerun the script with your credentials, e.g."
+    )
+    print(
+        "    SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<myapikey> ./examples/forms.py"
+    )
     exit()
 
 client.verbose = True

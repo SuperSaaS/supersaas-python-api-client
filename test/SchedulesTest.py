@@ -1,8 +1,7 @@
-from datetime import datetime
-from .Helper import *
-
+from .Helper import SupersaasTest
 
 class SchedulesTest(SupersaasTest):
+
     def test_list(self):
         self.assertIsNotNone(self.client.schedules.list())
 

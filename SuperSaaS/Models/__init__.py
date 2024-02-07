@@ -1,6 +1,6 @@
 __all__ = [
-    "BaseModel", "Form", "Slot", "Appointment", "User", "Resource", "Schedule", "FieldList", "Group", "Promotion",
-    "SuperForm"
+    "BaseModel", "Form", "Slot", "Appointment", "User", "Resource", "Schedule",
+    "FieldList", "Group", "Promotion", "SuperForm"
 ]
 
 from .BaseModel import BaseModel

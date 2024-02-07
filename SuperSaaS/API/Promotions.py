@@ -1,12 +1,16 @@
 from .BaseApi import BaseApi
 from ..Models.Promotion import Promotion
 
+
 class Promotions(BaseApi):
+
     def list(self, limit=None, offset=None):
         path = '/promotions'
         params = {
-            'limit': self._validate_number(limit) if limit is not None else None,
-            'offset': self._validate_number(offset) if offset is not None else None
+            'limit':
+            self._validate_number(limit) if limit is not None else None,
+            'offset':
+            self._validate_number(offset) if offset is not None else None
         }
         # Filter out None values
         params = {k: v for k, v in params.items() if v is not None}

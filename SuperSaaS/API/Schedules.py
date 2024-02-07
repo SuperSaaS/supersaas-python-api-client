@@ -11,9 +11,7 @@ class Schedules(BaseApi):
         return [Schedule(attributes) for attributes in res]
 
     def resources(self, schedule_id):
-        query = {
-            'schedule_id': self._validate_id(schedule_id)
-        }
+        query = {'schedule_id': self._validate_id(schedule_id)}
         path = "/resources"
         res = self.client.get(path, query)
         return [Resource(attributes) for attributes in res]

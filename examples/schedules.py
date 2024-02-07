@@ -2,11 +2,15 @@
 from SuperSaaS import Client
 
 print("# SuperSaaS Schedules Example")
-client = Client.instance()  # Adjust based on your actual client instantiation method
+client = Client.instance()
 
 if not (client.account_name and client.api_key):
-    print("ERROR! Missing account credentials. Rerun the script with your credentials, e.g.")
-    print("    SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<myapikey> ./examples/schedules.py")
+    print(
+        "ERROR! Missing account credentials. Rerun the script with your credentials, e.g."
+    )
+    print(
+        "    SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<myapikey> ./examples/schedules.py"
+    )
 
 client.verbose = True
 
@@ -21,7 +25,9 @@ for i in range(min(10, len(schedules))):
     try:
         client.schedules.resources(schedules[i].id)
     except Exception as e:
-        print(f"Error fetching resources for schedule {schedules[i].id}: {str(e)}")
+        print(
+            f"Error fetching resources for schedule {schedules[i].id}: {str(e)}"
+        )
         continue
 
 print("listing fields...")

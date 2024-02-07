@@ -1,7 +1,9 @@
-from .Helper import *
+"""" Tests for users API """
 
+from .Helper import SupersaasTest
 
 class UsersTest(SupersaasTest):
+
     def test_get(self):
         user_id = 12345
         self.assertIsNotNone(self.client.users.get(user_id))
@@ -14,23 +16,30 @@ class UsersTest(SupersaasTest):
         self.assertIsNotNone(self.client.users.list(True, 10, 10))
 
     def test_create(self):
-        self.assertIsNotNone(self.client.users.create(self.__user_attributes()))
+        self.assertIsNotNone(self.client.users.create(
+            self.__user_attributes()))
 
     def test_create_fk(self):
         user_fk = '6789fk'
-        self.assertIsNotNone(self.client.users.create(self.__user_attributes(), user_fk))
+        self.assertIsNotNone(
+            self.client.users.create(self.__user_attributes(), user_fk))
 
     def test_create_all(self):
         user_fk = '6789fk'
-        self.assertIsNotNone(self.client.users.create(self.__user_attributes(), user_fk, True, 'ignore'))
+        self.assertIsNotNone(
+            self.client.users.create(self.__user_attributes(), user_fk, True,
+                                     'ignore'))
 
     def test_update(self):
         user_id = 12345
-        self.assertIsNotNone(self.client.users.update(user_id, self.__user_attributes()))
+        self.assertIsNotNone(
+            self.client.users.update(user_id, self.__user_attributes()))
 
     def test_update_all(self):
         user_id = 12345
-        self.assertIsNotNone(self.client.users.update(user_id, self.__user_attributes(), True, 'error'))
+        self.assertIsNotNone(
+            self.client.users.update(user_id, self.__user_attributes(), True,
+                                     'error'))
 
     def test_delete(self):
         user_id = 12345

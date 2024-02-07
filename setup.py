@@ -1,3 +1,5 @@
+"""Setup for SuperSaas API client module."""
+
 from setuptools import setup, find_packages
 
 setup(
@@ -6,12 +8,15 @@ setup(
     license='MIT',
     packages=find_packages(),
     include_package_data=True,
-    description='Online bookings/appointments/calendars using the SuperSaaS scheduling platform  - https://supersaas.com',
-    long_description='The SuperSaaS API provides services that can be used to add online booking and scheduling functionality to an existing website or CRM software.',
+    description='Online bookings/appointments/calendars using the SuperSaaS scheduling platform  - '
+                'https://supersaas.com',
+    long_description='The SuperSaaS API provides services that can be used to add online booking'
+                     ' and scheduling functionality to an existing website or CRM software.',
     author='Kaarle Kulvik',
     author_email='dev@supersaas.com',
-    keywords=['online appointment schedule', 'booking calendar', 'appointment book', 'reservation system', 
-              'scheduling software', 'online booking system', 'scheduling system', 'supersaas'],
+    keywords=['online appointment schedule', 'booking calendar', 'appointment book',
+              'reservation system', 'scheduling software', 'online booking system',
+              'scheduling system', 'supersaas'],
     url='https://www.supersaas.com',
     install_requires=[
     ],

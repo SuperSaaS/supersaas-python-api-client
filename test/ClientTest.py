@@ -1,4 +1,4 @@
-from .Helper import *
+from .Helper import SupersaasTest
 import SuperSaaS
 import time
 import os
@@ -12,14 +12,19 @@ class ClientTest(SupersaasTest):
 
     def test_request(self):
         for method in ['GET', 'POST', 'PUT', 'DELETE']:
-            self.assertIsNotNone(self.client.request(method, '/test', {'test': True}))
+            self.assertIsNotNone(
+                self.client.request(method, '/test', {'test': True}))
 
     def test_instance_configuration(self):
-        self.client.configure(account_name='account', api_key='xxxxxxxxxxxxxxxxxxxxxx')
+        self.client.configure(account_name='account',
+                              api_key='xxxxxxxxxxxxxxxxxxxxxx')
         self.assertEqual('account', SuperSaaS.Client.instance().account_name)
-        self.assertEqual('xxxxxxxxxxxxxxxxxxxxxx', SuperSaaS.Client.instance().api_key)
+        self.assertEqual('xxxxxxxxxxxxxxxxxxxxxx',
+                         SuperSaaS.Client.instance().api_key)
 
-    @unittest.skipIf(os.environ.get('SSS_PYTHON_RATE_LIMITER_TEST') != 'true', "Skipping RateLimiter test")
+    @unittest.skipIf(
+        os.environ.get('SSS_PYTHON_RATE_LIMITER_TEST') != 'true',
+        "Skipping RateLimiter test")
     def test_rate_limit(self):
         start_time = time.time()
         # Simulate making 21 requests within the same second
@@ -29,4 +34,3 @@ class ClientTest(SupersaasTest):
 
         # Assert that the elapsed time is greater than or equal to 5.0 seconds
         self.assertGreaterEqual(end_time - start_time, 5.0)
-

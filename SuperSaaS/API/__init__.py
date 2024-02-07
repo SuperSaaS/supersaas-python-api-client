@@ -1,5 +1,6 @@
 __all__ = [
-    "BaseApi", "Appointments", "Forms", "Users", "Schedules", "Promotions", "Groups"
+    "BaseApi", "Appointments", "Forms", "Users", "Schedules", "Promotions",
+    "Groups"
 ]
 
 from .BaseApi import BaseApi

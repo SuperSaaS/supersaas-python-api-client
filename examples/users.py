@@ -6,12 +6,16 @@ from SuperSaaS import Client  # Adjust based on actual Python package or module
 
 print("# SuperSaaS Users Example")
 
-client = Client.instance()  # Adjust based on your actual client instantiation method
+client = Client.instance()
 
 # Check for environment variables for account credentials
 if not (client.account_name and client.api_key):
-    print("ERROR! Missing account credentials. Rerun the script with your credentials, e.g.,")
-    print("SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<xxxxxxxxxxxxxxxxxxxxxx> python examples/users.py")
+    print(
+        "ERROR! Missing account credentials. Rerun the script with your credentials, e.g.,"
+    )
+    print(
+        "SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<xxxxxxxxxxxxxxxxxxxxxx> python examples/users.py"
+    )
     exit()
 
 print(f"## Account:  {client.account_name}")
@@ -24,8 +28,7 @@ print("#### client.users.create({...})")
 params = {
     'full_name': 'Example',
     'name': 'example@example.com',
-    'email': 'example@example.com',
-    'api_key': 'example'
+    'email': 'example@example.com'
 }
 client.users.create(params)
 new_user_id = None

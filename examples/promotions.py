@@ -4,12 +4,16 @@ from SuperSaaS import Client
 
 print("# SuperSaaS Promotions Example")
 
-client = Client.instance()  # Adjust based on your actual client instantiation method
+client = Client.instance()
 
 # Check for environment variables for account credentials
 if not (client.account_name and client.api_key):
-    print("ERROR! Missing account credentials. Rerun the script with your credentials, e.g.,")
-    print("SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<xxxxxxxxxxxxxxxxxxxxxx> python examples/users.py")
+    print(
+        "ERROR! Missing account credentials. Rerun the script with your credentials, e.g.,"
+    )
+    print(
+        "SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<xxxxxxxxxxxxxxxxxxxxxx> python examples/users.py"
+    )
     exit()
 
 print(f"## Account:  {client.account_name}")
