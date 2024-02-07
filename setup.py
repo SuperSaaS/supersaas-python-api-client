@@ -20,7 +20,10 @@ setup(
     url='https://www.supersaas.com',
     install_requires=[
     ],
+    python_requires='>=3',
     project_urls={
+        'Homepage': 'https://www.supersaas.com',
+        'Issues': 'https://github.com/SuperSaaS/supersaas-python-api-client/issues',
         'Documentation': 'https://www.supersaas.com/info/dev',
         'Source': 'https://github.com/SuperSaaS/supersaas-python-api-client'
     },
