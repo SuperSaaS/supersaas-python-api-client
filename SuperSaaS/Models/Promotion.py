@@ -1,4 +1,5 @@
 from .BaseModel import BaseModel
 
-class Appointment(BaseModel):
+
+class Promotion(BaseModel):
     pass

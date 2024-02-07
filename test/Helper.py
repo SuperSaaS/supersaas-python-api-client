@@ -4,6 +4,7 @@ from SuperSaaS import Configuration
 
 
 class SupersaasTest(unittest.TestCase):
+
     def setUp(self):
         unittest.TestCase.setUp(self)
 
