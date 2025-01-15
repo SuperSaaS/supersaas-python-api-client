@@ -139,13 +139,14 @@ You only need to specify the attributes you wish to update:
 
 #### Delete User
 
-Delete a single user by `user_id`, and if the user does not exist 404 error will be raised.:
+Delete a single user by `user_id`, and if the user does not exist 404 error will be raised.
+If webhook=true is present it will trigger any webhooks connected to the account:
 
     Client.instance().users.delete(user_id=12345)
     
 #### Get User
 
-Get a single user by `user_id`, and if the user does not exist 404 error will be raised:
+Get a single user by `user_id` with optional `form`, and if the user does not exist 404 error will be raised:
 
     Client.instance().users.get(user_id=12345)
 
@@ -203,6 +204,7 @@ Get agenda (upcoming) appointments by `schedule_id` and `user_id`, with `from_ti
 
 #### Get Agenda Slots
 
+This method is deprecated and will be removed in the future.
 Get agenda (upcoming) slots by `schedule_id` and `user_id`, with `from_time` view param,
 `agenda_slots(schedule_id, user_id, from_time=None)`:
 
@@ -226,6 +228,7 @@ Get recently changed appointments by `schedule_id`, with `from_time` time, `to` 
 
 #### Get Recent Changes Slots
 
+This method is deprecated and will be removed in the future.
 Get recently changed slot appointment by `schedule_id`, with `from_time` view params:
 
     Client.instance().appointments.changes_slots(schedule_id=12345, from_time='2018-01-31 00:00:00')
@@ -241,7 +244,7 @@ Get range of appointments by `schedule_id`, with `today`,`from_time`, `to` time 
 
 #### List Template Forms
 
-Get all forms by template `superform_id`, with `from_time`, and `user` params ([see](https://www.supersaas.com/info/dev/form_api)),
+Get all forms by template `superform_id`, with `from_time`, and `user` params ([see](https://www.supersaas.com/info/dev/form_api)) and `limit`/`offset` pagination params,
 `list(superform_id, from_time=None, user=None)`:
 
     Client.instance().forms.list(superform_id=12345, from_time='2018-01-31 00:00:00')

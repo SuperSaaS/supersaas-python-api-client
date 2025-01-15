@@ -4,10 +4,10 @@ from ..Models.Slot import Slot
 
 
 class Appointments(BaseApi):
-    def agenda(self, schedule_id, user_id, from_time=None, slot=False):
+    def agenda(self, schedule_id, user, from_time=None, slot=False):
         path = f"/agenda/{self._validate_id(schedule_id)}"
         query = {
-            'user': self._validate_present(user_id),
+            'user': self._validate_present(user),
             'from': self._validate_datetime(from_time) if from_time else None
         }
         if slot:
@@ -15,6 +15,8 @@ class Appointments(BaseApi):
         res = self.client.get(path, query)
         return self.__map_slots_or_bookings(res)
 
+
+    # LEGACY METHOD WILL BE REMOVED PLEASE USE AGENDA ABOVE
     def agenda_slots(self, schedule_id, user_id, from_time=None):
         path = f"/agenda/{self._validate_id(schedule_id)}"
         query = {
@@ -44,14 +46,16 @@ class Appointments(BaseApi):
         res = self.client.get(path, query)
         return self.__map_slots_or_bookings(res)
 
-    def list(self, schedule_id, form=None, start_time=None, limit=None):
+    def list(self, schedule_id, form=None, start_time=None, limit=None, finish=None):
         path = "/bookings"
         query = {
             'schedule_id': self._validate_id(schedule_id),
             'form': 'true' if form else None,
             'start':
             self._validate_datetime(start_time) if start_time else None,
-            'limit': self._validate_number(limit) if limit else None
+            'limit': self._validate_number(limit) if limit else None,
+            'finish':
+                self._validate_datetime(finish) if finish else None
         }
         res = self.client.get(path, query)
         return self.__map_slots_or_bookings(res)
@@ -75,19 +79,49 @@ class Appointments(BaseApi):
         res = self.client.post(path, params)
         return {'location': res}
 
-    def update(self,
-               schedule_id,
-               appointment_id,
-               attributes,
-               form=None,
-               webhook=None):
+    def __create_update_params(self, schedule_id, attributes, form, webhook):
+        # Don't wrap attributes in 'booking' if they're already wrapped
+        if attributes and isinstance(attributes, dict):
+            if 'booking' in attributes:
+                params = attributes
+            else:
+                params = {'booking': attributes}
+        else:
+            params = {'booking': {}}
+
+        # Add optional parameters
+        if form is not None:
+            params['form'] = form
+        if webhook is not None:
+            params['webhook'] = webhook
+
+        return params
+
+    def update(self, schedule_id, appointment_id, attributes, form=None, webhook=None):
+        """
+        Update an existing appointment/booking
+        """
         path = f"/bookings/{self._validate_id(appointment_id)}"
         params = self.__create_update_params(schedule_id, attributes, form, webhook)
-        params['booking'] = dict(
-            filter(lambda item: item[1] is not None,
-                   params['booking'].items()))
-        res = self.client.put(path, params)
-        return Appointment(res)
+
+        # Debug print
+        print(f"Update params: {params}")
+        print(f"Update path: {path}")
+
+        # Ensure booking attributes are not None
+        if params.get('booking') is None:
+            params['booking'] = {}
+
+        # Filter out None values from booking attributes
+        params['booking'] = {k: v for k, v in params['booking'].items() if v is not None}
+
+        try:
+            res = self.client.put(path, params)
+            return Appointment(res)
+        except Exception as e:
+            print(f"Update error: {str(e)}")
+            print(f"Params sent: {params}")
+            raise
 
     def delete(self, schedule_id, appointment_id, webhook=None):
         params = {'webhook': webhook}
@@ -147,7 +181,6 @@ class Appointments(BaseApi):
             'booking': {
                 'start': attributes.get('start', None),
                 'finish': attributes.get('finish', None),
-                'name': attributes.get('name', None),
                 'email': attributes.get('email', None),
                 'full_name': attributes.get('full_name', None),
                 'address': attributes.get('address', None),
@@ -161,7 +194,6 @@ class Appointments(BaseApi):
                 'super_field': attributes.get('super_field', None),
                 'resource_id': attributes.get('resource_id', None),
                 'slot_id': attributes.get('slot_id', None),
-                'description': attributes.get('description', None)
             }
         }
         if form:

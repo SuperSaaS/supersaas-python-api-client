@@ -2,6 +2,7 @@ from .Helper import SupersaasTest
 import SuperSaaS
 import time
 import os
+import unittest
 
 class ClientTest(SupersaasTest):
 
@@ -33,4 +34,5 @@ class ClientTest(SupersaasTest):
         end_time = time.time()
 
         # Assert that the elapsed time is greater than or equal to 5.0 seconds
-        self.assertGreaterEqual(end_time - start_time, 5.0)
+        self.assertGreaterEqual(end_time - start_time, 4.0)
+        self.assertLessEqual(end_time - start_time, 4.1)

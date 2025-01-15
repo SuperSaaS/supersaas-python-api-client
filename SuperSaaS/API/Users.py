@@ -5,9 +5,12 @@ from ..Models.FieldList import FieldList
 
 class Users(BaseApi):
 
-    def get(self, user_id=None):
+    def get(self, user_id=None, form=None):
         path = self.__user_path(user_id)
-        res = self.client.get(path)
+        query = {
+            'form': 'true' if form else None
+        }
+        res = self.client.get(path, query)
         return User(res)
 
     def list(self, form=None, limit=None, offset=None):
@@ -41,9 +44,10 @@ class Users(BaseApi):
             filter(lambda item: item[1] is not None, params['user'].items()))
         return self.client.put(path, params, query)
 
-    def delete(self, user_id):
+    def delete(self, user_id, webhook=None):
         path = self.__user_path(self._validate_id(user_id))
-        return self.client.delete(path)
+        params = {'webhook': webhook}
+        return self.client.delete(path, params)
 
     def field_list(self):
         path = '/field_list'
@@ -82,6 +86,8 @@ class Users(BaseApi):
                 'credit':
                 attributes.get('credit', None),
                 'role':
-                attributes.get('role', None)
+                attributes.get('role', None),
+                'group':
+                attributes.get('group', None)
             }
         }
