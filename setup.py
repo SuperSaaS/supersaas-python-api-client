@@ -28,7 +28,7 @@ setup(
         'Source': 'https://github.com/SuperSaaS/supersaas-python-api-client'
     },
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
