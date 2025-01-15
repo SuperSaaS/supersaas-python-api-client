@@ -11,7 +11,7 @@ class Forms(BaseApi):
         res = self.client.get(path, query)
         return Form(res)
 
-    def list(self, superform_id, from_time=None, user=None):
+    def list(self, superform_id, from_time=None, user=None, limit=None, offset=None):
         path = "/forms"
         params = {'form_id': self._validate_id(superform_id)}
         if from_time:
@@ -20,6 +20,10 @@ class Forms(BaseApi):
             params['from'] = self._validate_datetime(from_time)
         if user or user == 0:
             params['user'] = self._validate_user(user)
+        if limit:
+            params['limit'] = self._validate_number(limit)
+        if offset:
+            params['offset'] = self._validate_number(offset)
         res = self.client.get(path, params)
         return [Form(attributes) for attributes in res]
 

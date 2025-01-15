@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='supersaas-api-client',
-    version='2.0.0',
+    version='2.0.1',
     license='MIT',
     packages=find_packages(),
     include_package_data=True,
@@ -28,7 +28,7 @@ setup(
         'Source': 'https://github.com/SuperSaaS/supersaas-python-api-client'
     },
     classifiers=[
-        'Development Status :: 5',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
