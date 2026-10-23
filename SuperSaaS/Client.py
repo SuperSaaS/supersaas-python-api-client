@@ -82,6 +82,7 @@ class Client:
         self.verbose = configuration.verbose
 
         self.appointments = API.Appointments(self)
+        self.slots = API.Slots(self)
         self.forms = API.Forms(self)
         self.schedules = API.Schedules(self)
         self.users = API.Users(self)

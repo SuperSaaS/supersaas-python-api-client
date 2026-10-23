@@ -195,6 +195,42 @@ List appointments by `schedule_id`, with `form` and `start_time` and `limit` vie
 
     Client.instance().appointments.list(schedule_id=12345, form=True, start_time=datetime.now(), limit=50)
 
+#### List Slots
+
+List the slots of a capacity type schedule by `schedule_id`, with optional `start_time`/`finish` range and `limit` (default 100, max 2500)/`offset` pagination params,
+`list(schedule_id, start_time=None, finish=None, limit=None, offset=None)`:
+
+    Client.instance().slots.list(schedule_id=12345, start_time=datetime.now(), limit=50)
+
+_Note: only works for capacity type schedules, otherwise a 405 error is raised._
+
+#### Get Slot
+
+Get a single slot by `schedule_id` and `slot_id`, will raise 404 error if not found:
+
+    Client.instance().slots.get(schedule_id=12345, slot_id=67890)
+
+#### Create Slot
+
+Create a slot with `schedule_id` and slot attributes `start`, `finish`, `title`, `description`, `location`, `capacity`, `price` and `color`,
+`create(schedule_id, attributes)`. Returns a dict with the `location` of the new slot.
+A `capacity` of `'-'` means unlimited places, `0` means no places:
+
+    Client.instance().slots.create(schedule_id=12345, attributes={'start': '2030-01-31 10:00:00', 'finish': '2030-01-31 11:00:00', 'title': 'Yoga', 'capacity': 10})
+
+#### Update Slot
+
+Update a slot by `schedule_id` and `slot_id`, you only need to specify the attributes you wish to update,
+`update(schedule_id, slot_id, attributes)`:
+
+    Client.instance().slots.update(schedule_id=12345, slot_id=67890, attributes={'capacity': 12})
+
+#### Delete Slot
+
+Delete a single slot by `schedule_id` and `slot_id`. Note that this also deletes the appointments booked on the slot:
+
+    Client.instance().slots.delete(schedule_id=12345, slot_id=67890)
+
 #### Get Agenda
 
 Get agenda (upcoming) appointments by `schedule_id` and `user_id`, with `from_time` view param ([see](https://www.supersaas.com/info/dev/appointment_api#agenda),
