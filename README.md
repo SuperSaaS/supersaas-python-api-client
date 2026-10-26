@@ -170,6 +170,8 @@ Create an appointment with `schedule_id`, and `user_id(optional)` (see API docum
 
     Client.instance().appointments.create(schedule_id=12345, user_id=67890, attributes={'full_name': 'Example Name', 'email': 'example@example.com', 'slot_id': 12345}, form=True, webhook=True)
 
+Besides the user fields, the booking attributes include `description` (resource schedules), `service_id` (service schedules) and `quantity` (capacity schedules).
+
 #### Update Appointment/Booking
 
 Update an appointment by `schedule_id` and `appointment_id` with appointment attributes, see the above link,

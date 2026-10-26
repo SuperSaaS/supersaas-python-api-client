@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from .Helper import SupersaasTest
 
@@ -41,6 +42,27 @@ class AppointmentsTest(SupersaasTest):
             self.client.appointments.update(schedule_id, appointment_id,
                                             self.__appointment_attributes(),
                                             True, True))
+
+    def test_create_sends_description_service_and_quantity(self):
+        self.client.appointments.create(12345, 67890, {'start': '2026-11-02 10:00:00', 'description': 'Court 2',
+                                                       'service_id': 7, 'quantity': 3})
+        booking = json.loads(self.client.last_request.data)['booking']
+        self.assertEqual('Court 2', booking['description'])
+        self.assertEqual(7, booking['service_id'])
+        self.assertEqual(3, booking['quantity'])
+
+    def test_update_sends_description_service_and_quantity(self):
+        self.client.appointments.update(12345, 67890, {'description': 'Court 2', 'service_id': 7, 'quantity': 3})
+        booking = json.loads(self.client.last_request.data)['booking']
+        self.assertEqual('Court 2', booking['description'])
+        self.assertEqual(7, booking['service_id'])
+        self.assertEqual(3, booking['quantity'])
+
+    def test_unset_new_attributes_are_not_sent(self):
+        self.client.appointments.update(12345, 67890, {'full_name': 'Tester Test'})
+        booking = json.loads(self.client.last_request.data)['booking']
+        for key in ('description', 'service_id', 'quantity'):
+            self.assertNotIn(key, booking)
 
     def test_agenda(self):
         schedule_id = 12345

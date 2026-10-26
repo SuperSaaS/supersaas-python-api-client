@@ -79,24 +79,6 @@ class Appointments(BaseApi):
         res = self.client.post(path, params)
         return {'location': res}
 
-    def __create_update_params(self, schedule_id, attributes, form, webhook):
-        # Don't wrap attributes in 'booking' if they're already wrapped
-        if attributes and isinstance(attributes, dict):
-            if 'booking' in attributes:
-                params = attributes
-            else:
-                params = {'booking': attributes}
-        else:
-            params = {'booking': {}}
-
-        # Add optional parameters
-        if form is not None:
-            params['form'] = form
-        if webhook is not None:
-            params['webhook'] = webhook
-
-        return params
-
     def update(self, schedule_id, appointment_id, attributes, form=None, webhook=None):
         """
         Update an existing appointment/booking
@@ -196,6 +178,11 @@ class Appointments(BaseApi):
                 'slot_id': attributes.get('slot_id', None),
             }
         }
+        # description is for resource schedules, service_id for service schedules, quantity for capacity schedules.
+        # Only sent when set, so an update doesn't clear them.
+        for key in ('description', 'service_id', 'quantity'):
+            if attributes.get(key) is not None:
+                params['booking'][key] = attributes[key]
         if form:
             params['form'] = form
         if webhook:
