@@ -1,6 +1,6 @@
 __all__ = [
     "BaseApi", "Appointments", "Slots", "Forms", "Users", "Schedules", "Promotions",
-    "Groups"
+    "Groups", "Hooks"
 ]
 
 from .BaseApi import BaseApi
@@ -11,3 +11,4 @@ from .Users import Users
 from .Schedules import Schedules
 from .Promotions import Promotions
 from .Groups import Groups
+from .Hooks import Hooks

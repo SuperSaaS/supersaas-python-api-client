@@ -116,6 +116,12 @@ Get all the available fields of a schedule by `schedule_id`:
 
     Client.instance().schedules.field_list(12345)
 
+#### List Input Fields of a Schedule
+
+Get the input fields (`name`, `type`, `label`, `required`, ...) of a schedule by `schedule_id`:
+
+    Client.instance().schedules.input_field_list(12345)
+
 #### Create User
 
 Create a user with user attributes params `create(attributes, user_id=None, webhook=None, duplicate=None)`.
@@ -162,6 +168,12 @@ User can have a form attached, and setting `form=True` shows the data:
 Get all the fields available to user object:
 
     Client.instance().users.field_list
+
+#### List Input Fields of User object
+
+Get the input fields (`name`, `type`, `label`, `required`, ...) of the user object:
+
+    Client.instance().users.input_field_list()
 
 #### Create Appointment/Booking
 
@@ -323,6 +335,29 @@ List Groups in an account ([see](https://www.supersaas.com/info/dev/information_
 
     Client.instance().groups.list
 
+#### Ping
+
+Check that the credentials are valid. Returns `True`, raises `SuperSaaS.Error` otherwise:
+
+    Client.instance().ping()
+
+#### Hooks
+
+Create a webhook with `create(target_url, event, parent_id)`. `event` is a trigger letter: U user created, M user modified,
+N new appointment, C changed appointment, R reminder, F follow-up, S form submitted, O form changed, H mail, P credit purchase.
+`parent_id` is the schedule id for N/C/R/F, the super form id for S/O, and must be present (but is ignored) for U/M/H/P.
+Returns a dict with `id` and `parent_id`:
+
+    hook = Client.instance().hooks.create('https://www.example.com/hook', 'N', 12345)
+
+Delete a webhook with `delete(hook_id, parent_id)`:
+
+    Client.instance().hooks.delete(hook['id'], hook['parent_id'])
+
+List the webhooks of the account:
+
+    Client.instance().hooks.list()
+
 ## Error Handling
 
 The API Client raises a custom Error for HTTP errors and invalid input. Rescue from `SuperSaaS.Error` when making API requests. e.g.
@@ -333,6 +368,15 @@ The API Client raises a custom Error for HTTP errors and invalid input. Rescue f
         Client.instance().users.get
     except Error:
         # Handle error
+
+The error message is unchanged, and `Error` additionally has a `status` attribute (the HTTP status code, or `None` for
+errors that are not HTTP responses) and an `errors` attribute (the list of errors from the response body, `[]` if there are none). e.g.
+
+    try:
+        Client.instance().users.get(999999)
+    except Error as e:
+        e.status #=> 404
+        e.errors #=> [{"status":"404","title":"Not found"}]
 
 Validation errors are assigned to the response model. e.g.
 

@@ -62,3 +62,8 @@ class UsersTest(SupersaasTest):
             'role': 3,
             'webhook': 'true'
         }
+
+    def test_input_field_list(self):
+        self.assertIsNotNone(self.client.users.input_field_list())
+        self.assertEqual('GET', self.client.last_request.get_method())
+        self.assertIn('/api/input_field_list.json', self.client.last_request.full_url)

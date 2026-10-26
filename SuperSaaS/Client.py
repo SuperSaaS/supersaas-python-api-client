@@ -88,6 +88,7 @@ class Client:
         self.users = API.Users(self)
         self.groups = API.Groups(self)
         self.promotions = API.Promotions(self)
+        self.hooks = API.Hooks(self)
 
         self.last_request = None
         self.rate_limiter = RateLimiter()
@@ -103,6 +104,10 @@ class Client:
 
     def delete(self, path, params=None, query=None):
         return self.request('DELETE', path, params, query)
+
+    def ping(self):
+        self.get('/ping')
+        return True
 
     def request(self, http_method, path, params=None, query=None):
         self.rate_limiter.throttle()
@@ -181,7 +186,18 @@ class Client:
 
                 return data
         except HTTPError as e:
-            raise Error(f"HTTP Request Error: {e.reason}, ({url})") from e
+            raise Error(f"HTTP Request Error: {e.reason}, ({url})",
+                        status=e.code,
+                        errors=self._parse_errors(e)) from e
+
+    @staticmethod
+    def _parse_errors(http_error):
+        try:
+            body = json.loads(http_error.read())
+            errors = body.get('errors') if isinstance(body, dict) else None
+            return errors if isinstance(errors, list) else []
+        except (ValueError, OSError, AttributeError):
+            return []
 
 
 class Configuration:

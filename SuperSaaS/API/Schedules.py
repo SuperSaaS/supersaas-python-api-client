@@ -21,3 +21,9 @@ class Schedules(BaseApi):
         query = {'schedule_id': self._validate_id(schedule_id)}
         res = self.client.get(path, query)
         return [FieldList(attributes) for attributes in res]
+
+    def input_field_list(self, schedule_id):
+        path = '/input_field_list'
+        query = {'schedule_id': self._validate_id(schedule_id)}
+        res = self.client.get(path, query)
+        return [FieldList(attributes) for attributes in res]
