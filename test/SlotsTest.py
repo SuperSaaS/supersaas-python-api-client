@@ -77,6 +77,11 @@ class SlotsTest(SupersaasTest):
         self.assertEqual({'slot': {'capacity': 0}},
                          json.loads(self.client.last_request.data))
 
+    def test_update_none_capacity_is_not_sent(self):
+        self.client.slots.update(12345, 67890, {'title': 'Yoga', 'capacity': None})
+        self.assertEqual({'slot': {'title': 'Yoga'}},
+                         json.loads(self.client.last_request.data))
+
     def test_delete(self):
         self.assertIsNotNone(self.client.slots.delete(12345, 67890))
         self.assertEqual('DELETE', self.client.last_request.get_method())

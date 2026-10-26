@@ -56,7 +56,8 @@ class Slots(BaseApi):
             value = attributes.get(key)
             if key in ('start', 'finish') and value is not None:
                 value = self._validate_datetime(value)
-            # capacity: '-' or None means unlimited, 0 means no places (server side)
+            # capacity: '-' means unlimited and 0 means no places. None values aren't sent, so
+            # capacity=None leaves the capacity unchanged instead of making it unlimited.
             if value is not None:
                 slot[key] = value
         return {'slot': slot}
