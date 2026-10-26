@@ -178,9 +178,9 @@ class Appointments(BaseApi):
                 'slot_id': attributes.get('slot_id', None),
             }
         }
-        # description is for resource schedules, service_id for service schedules, quantity for capacity schedules.
+        # description is for resource schedules, quantity (number of places) for capacity schedules; form_id connects a form.
         # Only sent when set, so an update doesn't clear them.
-        for key in ('description', 'service_id', 'quantity'):
+        for key in ('description', 'quantity', 'form_id'):
             if attributes.get(key) is not None:
                 params['booking'][key] = attributes[key]
         if form:
