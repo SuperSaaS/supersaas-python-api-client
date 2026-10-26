@@ -43,25 +43,25 @@ class AppointmentsTest(SupersaasTest):
                                             self.__appointment_attributes(),
                                             True, True))
 
-    def test_create_sends_description_quantity_and_form_id(self):
+    def test_create_sends_description_and_quantity_but_not_read_only_form_id(self):
         self.client.appointments.create(12345, 67890, {'start': '2026-11-02 10:00:00', 'description': 'Court 2',
                                                        'form_id': 7, 'quantity': 3})
         booking = json.loads(self.client.last_request.data)['booking']
         self.assertEqual('Court 2', booking['description'])
-        self.assertEqual(7, booking['form_id'])
+        self.assertNotIn('form_id', booking)
         self.assertEqual(3, booking['quantity'])
 
-    def test_update_sends_description_quantity_and_form_id(self):
+    def test_update_sends_description_and_quantity_but_not_read_only_form_id(self):
         self.client.appointments.update(12345, 67890, {'description': 'Court 2', 'form_id': 7, 'quantity': 3})
         booking = json.loads(self.client.last_request.data)['booking']
         self.assertEqual('Court 2', booking['description'])
-        self.assertEqual(7, booking['form_id'])
+        self.assertNotIn('form_id', booking)
         self.assertEqual(3, booking['quantity'])
 
     def test_unset_new_attributes_are_not_sent(self):
         self.client.appointments.update(12345, 67890, {'full_name': 'Tester Test'})
         booking = json.loads(self.client.last_request.data)['booking']
-        for key in ('description', 'quantity', 'form_id'):
+        for key in ('description', 'quantity'):
             self.assertNotIn(key, booking)
 
     def test_agenda(self):
