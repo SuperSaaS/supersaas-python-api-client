@@ -104,24 +104,11 @@ class Appointments(BaseApi):
         path = f"/bookings/{self._validate_id(appointment_id)}"
         params = self.__create_update_params(schedule_id, attributes, form, webhook)
 
-        # Debug print
-        print(f"Update params: {params}")
-        print(f"Update path: {path}")
-
-        # Ensure booking attributes are not None
-        if params.get('booking') is None:
-            params['booking'] = {}
-
         # Filter out None values from booking attributes
         params['booking'] = {k: v for k, v in params['booking'].items() if v is not None}
 
-        try:
-            res = self.client.put(path, params)
-            return Appointment(res)
-        except Exception as e:
-            print(f"Update error: {str(e)}")
-            print(f"Params sent: {params}")
-            raise
+        res = self.client.put(path, params)
+        return Appointment(res)
 
     def delete(self, schedule_id, appointment_id, webhook=None):
         params = {'webhook': webhook}

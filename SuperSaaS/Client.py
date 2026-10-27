@@ -154,7 +154,7 @@ class Client:
             print('')
             print("### SuperSaaS Client Request:")
             print('')
-            print(f"#{http_method} #{url}")
+            print(f"{http_method} {url}")
             print('')
             print(data)
             print('')
