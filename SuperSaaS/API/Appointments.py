@@ -176,13 +176,13 @@ class Appointments(BaseApi):
                 'super_field': attributes.get('super_field', None),
                 'resource_id': attributes.get('resource_id', None),
                 'slot_id': attributes.get('slot_id', None),
+                # description is for resource schedules, quantity (number of places) for capacity schedules,
+                # form_id attaches an existing form
+                'description': attributes.get('description', None),
+                'quantity': attributes.get('quantity', None),
+                'form_id': attributes.get('form_id', None),
             }
         }
-        # Input attributes only. description is for resource schedules, quantity (number of places) for capacity schedules.
-        # Only sent when set, so an update doesn't clear them.
-        for key in ('description', 'quantity'):
-            if attributes.get(key) is not None:
-                params['booking'][key] = attributes[key]
         if form:
             params['form'] = form
         if webhook:
