@@ -103,6 +103,10 @@ class Appointments(BaseApi):
         path = f"/bookings/{self._validate_id(appointment_id)}"
         params = self.__create_update_params(schedule_id, attributes, form, webhook)
 
+        # Attributes passed as {'booking': None} are sent as an empty booking
+        if params.get('booking') is None:
+            params['booking'] = {}
+
         # Filter out None values from booking attributes
         params['booking'] = {k: v for k, v in params['booking'].items() if v is not None}
 
