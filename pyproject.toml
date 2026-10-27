@@ -1,3 +1,24 @@
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+python_files = ["*Test.py"]
+
+[tool.ruff]
+target-version = "py38"
+line-length = 130
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "N", "UP", "B"]
+ignore = [
+    # Module names (SuperSaaS/Client.py, test/ClientTest.py, ...) are part of the public import paths.
+    "N999",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# The package re-exports Client, Configuration, VERSION, ... from SuperSaaS.Client via a star import.
+"SuperSaaS/__init__.py" = ["F403", "F405"]
+# examples/slots.py comes from the open slots PR and uses `not 'X' in os.environ`; drop this once it is fixed there.
+"examples/slots.py" = ["E713"]
