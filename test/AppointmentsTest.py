@@ -148,3 +148,16 @@ class AppointmentsTest(SupersaasTest):
             'field_2_r': 'f 2 r',
             'super_field': 'sf'
         }
+
+    def test_update_does_not_print(self):
+        # Imported here to keep the module's import block untouched
+        import io
+        import json
+        from contextlib import redirect_stdout
+
+        with redirect_stdout(io.StringIO()) as out:
+            self.client.appointments.update(12345, 67890, {'full_name': 'Tester Test'})
+        self.assertEqual('', out.getvalue())
+        self.assertEqual('PUT', self.client.last_request.get_method())
+        self.assertEqual({'schedule_id': 12345, 'booking': {'full_name': 'Tester Test'}},
+                         json.loads(self.client.last_request.data))
