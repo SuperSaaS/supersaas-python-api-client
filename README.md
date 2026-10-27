@@ -11,9 +11,9 @@ The SuperSaaS API provides services that can be used to add online booking and s
 
 ##### Dependencies
 
-Python 3.*
+Python 3.8 or newer.
 
-No external libraries. The supporting `urllib`/`urllib2` and `json`/`simplejson` standard libs are loaded conditionally.
+No external libraries, only the Python standard library is used.
 
 ## Installation
 
@@ -26,7 +26,7 @@ The SDK is available from PyPi and can be installed using pip, e.g.
 The SuperSaaS client can be created in two ways:
 
 1. Simply initialize a `Client()` instance
-2. Obtain the singleton instnace by calling the helper method
+2. Obtain the singleton instance by calling the helper method
 
 ### Creating a normal instance
 Simply create a new client instance manually:
@@ -69,8 +69,9 @@ Client.instance().schedules.list()
 
 If the client isn't configured explicitly, it will use default `ENV` variables for the account name and api key.
 
-    ENV['SSS_API_ACCOUNT_NAME'] = 'your-env-supersaas-account-name'
-    ENV['SSS_API_KEY'] = 'your-env-supersaas-api-key' 
+    $ export SSS_API_ACCOUNT_NAME=your-env-supersaas-account-name
+    $ export SSS_API_KEY=your-env-supersaas-api-key
+
     Client.instance().account_name #=> 'your-env-supersaas-account-name'
     Client.instance().api_key #=> 'your-env-supersaas-api-key'
     
@@ -80,15 +81,17 @@ All configuration options can be individually set on the client.
     Client.instance().verbose = True
     ...
 
-Avaiable configuration options are:
-| Attribute | Default value | Descriptions |  |  |
-|----------------|----------------------------|-------------------------------------------------------------------------------------|---|---|
-| account_name | '' | Your account name |  |  |
-| api_key | '' | Your api key |  |  |
-| verbose | False | Whether to print the HTTP request/response data to console. For debugging purpose.  |  |  |
-| host | Configuration.DEFAULT_HOST | Server host. Normally you won't need to specify this. |  |  |
+Available configuration options are:
 
-For implementaion detail check the `Configuration()` class in  [SuperSaas/Client.py](SuperSaaS/Client.py)
+| Attribute | Default value | Description |
+|--------------|----------------------------|-----------------------------------------------------------------------------------|
+| account_name | `SSS_API_ACCOUNT_NAME` or '' | Your account name |
+| api_key | `SSS_API_KEY` or '' | Your API key |
+| host | `SSS_API_HOST` or Configuration.DEFAULT_HOST | Server host. Normally you won't need to specify this. |
+| verbose | False | Whether to print the HTTP request/response data to the console. For debugging purposes. |
+| dry_run | False | Build the request (available as `last_request`) without sending it. Requests return `{}`. |
+
+For implementation details check the `Configuration()` class in  [SuperSaas/Client.py](SuperSaaS/Client.py)
 
 ## API Methods
 
@@ -135,7 +138,7 @@ To avoid automatically creating a new record, you can add the parameter notfound
 If the `user_id` does not exist 404 error will be raised.
 You only need to specify the attributes you wish to update:
 
-    Client.instance().users.update(user_id=12345, attributes={'full_name': 'New Name'}, true, "ignore")
+    Client.instance().users.update(user_id=12345, attributes={'full_name': 'New Name'}, webhook=True, notfound='ignore')
 
 #### Delete User
 
@@ -161,7 +164,7 @@ User can have a form attached, and setting `form=True` shows the data:
 
 Get all the fields available to user object:
 
-    Client.instance().users.field_list
+    Client.instance().users.field_list()
 
 #### Create Appointment/Booking
 
@@ -191,7 +194,7 @@ Get a single appointment by `schedule_id` and `appointment_id`:
 
 #### List Appointments/Bookings
 
-List appointments by `schedule_id`, with `form` and `start_time` and `limit` view params `list(schedule_id, form=None, start_time=None, limit=None)`:
+List appointments by `schedule_id`, with `form` and `start_time` and `limit` view params `list(schedule_id, form=None, start_time=None, limit=None, finish=None)`:
 
     Client.instance().appointments.list(schedule_id=12345, form=True, start_time=datetime.now(), limit=50)
 
@@ -224,7 +227,7 @@ Get available appointments by `schedule_id`, with `from_time` time and `length_m
 Get recently changed appointments by `schedule_id`, with `from_time` time, `to` time, `user` user, `slot` view params (see [docs](https://www.supersaas.com/info/dev/appointment_api#recent_changes)),
 `changes(schedule_id, from_time=None, to=None, slot=False, user=None, limit=None, offset=None)`:
 
-    Client.instance().appointments.changes(schedule_id=12345, from_time='2018-01-31 00:00:00', True)
+    Client.instance().appointments.changes(schedule_id=12345, from_time='2018-01-31 00:00:00', slot=True)
 
 #### Get Recent Changes Slots
 
@@ -240,12 +243,12 @@ _Note: only works for capacity type schedules._
 Get range of appointments by `schedule_id`, with `today`,`from_time`, `to` time and `slot` view params (see [docs](https://www.supersaas.com/info/dev/appointment_api#range)),
 `range(schedule_id, today=False, from_time=None, to=None, slot=False, user=None, resource_id=None, service_id=None, limit=None, offset=None)`:
 
-    Client.instance().appointments.range(schedule_id=12345, today=True, from_time='2020-01-31 00:00:00',to='2020-02-01 00:00:00' slot=False)
+    Client.instance().appointments.range(schedule_id=12345, today=True, from_time='2020-01-31 00:00:00', to='2020-02-01 00:00:00', slot=False)
 
 #### List Template Forms
 
 Get all forms by template `superform_id`, with `from_time`, and `user` params ([see](https://www.supersaas.com/info/dev/form_api)) and `limit`/`offset` pagination params,
-`list(superform_id, from_time=None, user=None)`:
+`list(superform_id, from_time=None, user=None, limit=None, offset=None)`:
 
     Client.instance().forms.list(superform_id=12345, from_time='2018-01-31 00:00:00')
 
@@ -253,7 +256,7 @@ Get all forms by template `superform_id`, with `from_time`, and `user` params ([
 
 Get a list of Form templates (SuperForms):
 
-    Client.instance().forms.forms
+    Client.instance().forms.forms()
 
 #### Get Form
 
@@ -266,26 +269,26 @@ Get a single form by `form_id`, will raise 404 error if not found:
 Get a list of promotional coupon codes with pagination parameters `limit` and `offset` (see [docs](https://www.supersaas.com/info/dev/promotion_api)),
 `list(limit=None, offset=None)`:
 
-    Client.instance().promotions.list
+    Client.instance().promotions.list(limit=25, offset=0)
 
 #### Get a single coupon code
 
-Retrieve information about a single coupon code use with `promotion_code`:
+Retrieve information about a single coupon code use with `promotion_code` (a string of letters and digits):
 
-    Client.instance().promotions.promotion(12345)
+    Client.instance().promotions.promotion('abc123')
 
 #### Duplicate promotion code
 
 Duplicate a template promotion by giving (new) `promotion_code` and `template_code` in that order,
-`duplicate_promotion_code(self, promotion_code, template_code)`:
+`duplicate_promotion_code(promotion_code, template_code)`:
 
-    Client.instance().promotions.duplicate_promotion_code(12345, 94832838)
+    Client.instance().promotions.duplicate_promotion_code('newcode123', 'template123')
 
 #### List Groups in an account
 
 List Groups in an account ([see](https://www.supersaas.com/info/dev/information_api)):
 
-    Client.instance().groups.list
+    Client.instance().groups.list()
 
 ## Error Handling
 
@@ -294,7 +297,7 @@ The API Client raises a custom Error for HTTP errors and invalid input. Rescue f
     
     from SuperSaaS import Client, Error
     try:
-        Client.instance().users.get
+        Client.instance().users.get(12345)
     except Error:
         # Handle error
 
@@ -311,6 +314,7 @@ Validation errors are assigned to the response model. e.g.
 + [Ruby API Client](https://github.com/SuperSaaS/supersaas-ruby-api-client)
 + [PHP API Client](https://github.com/SuperSaaS/supersaas-php-api-client)
 + [NodeJS API Client](https://github.com/SuperSaaS/supersaas-nodejs-api-client)
++ [C# API Client](https://github.com/SuperSaaS/supersaas-csharp-api-client)
 
 Contact: [support@supersaas.com](mailto:support@supersaas.com)
 
@@ -321,16 +325,24 @@ The package follows [semantic versioning](https://semver.org/), i.e. MAJOR.MINOR
 ## Development
 
 ### Examples
-Do not run the examples blindly nor against your production database. They can have destructive effects, so please thread carefully.
+Do not run the examples blindly nor against your production database. They can have destructive effects, so please tread carefully.
 
 ### Running tests
-Run the pytest command with the path to your test folder. If you run into caching issues, then you either have to turn off the caching for tests or delete `__pycache__` in the test folder. If you wish to run the rate limiter test, you need to set the `SSS_PYTHON_RATE_LIMITER_TEST` environmental variable to `true`. Run all tests:
+The tests run against a client in `dry_run` mode, so they don't need an account or network access.
+Install the dev dependencies (`pipenv install --dev`, or `pip install pytest ruff`) and run all tests:
 
-    $ pytest test/*
+    $ python -m pytest
 
-or with a specific file:
+or a specific file:
 
-    $ pytest test/AppointmentsTest.py
+    $ python -m pytest test/AppointmentsTest.py
+
+The tests also run with the standard library runner: `python -m unittest discover -p '*Test.py'`.
+If you wish to run the rate limiter test, set the `SSS_PYTHON_RATE_LIMITER_TEST` environment variable to `true`.
+
+### Linting
+
+    $ ruff check .
 
 ## License
 
