@@ -132,6 +132,13 @@ class AppointmentsTest(SupersaasTest):
         self.assertIsNotNone(
             self.client.appointments.delete(schedule_id, appointment_id, True))
 
+    def test_delete_sends_webhook_in_query(self):
+        from urllib.parse import parse_qs, urlparse
+        self.client.appointments.delete(12345, 67890, True)
+        query = parse_qs(urlparse(self.client.last_request.full_url).query)
+        self.assertEqual({'schedule_id': ['12345'], 'webhook': ['true']}, query)
+        self.assertIsNone(self.client.last_request.data)
+
     def test_create_accepts_wrapped_attributes(self):
         import json
         self.client.appointments.create(12345, 67890, {'booking': {'full_name': 'Tester Test'}})

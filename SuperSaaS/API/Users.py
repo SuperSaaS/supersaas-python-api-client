@@ -46,8 +46,8 @@ class Users(BaseApi):
 
     def delete(self, user_id, webhook=None):
         path = self.__user_path(self._validate_id(user_id))
-        params = {'webhook': webhook}
-        return self.client.delete(path, params)
+        query = {'webhook': 'true'} if webhook else None
+        return self.client.delete(path, None, query)
 
     def field_list(self):
         path = '/field_list'

@@ -45,6 +45,16 @@ class UsersTest(SupersaasTest):
         user_id = 12345
         self.assertIsNotNone(self.client.users.delete(user_id))
 
+    def test_delete_sends_webhook_in_query(self):
+        self.client.users.delete(12345, True)
+        self.assertTrue(self.client.last_request.full_url.endswith('/api/users/12345.json?webhook=true'))
+        self.assertIsNone(self.client.last_request.data)
+
+    def test_delete_without_webhook(self):
+        self.client.users.delete(12345)
+        self.assertTrue(self.client.last_request.full_url.endswith('/api/users/12345.json'))
+        self.assertIsNone(self.client.last_request.data)
+
     def __user_attributes(self):
         return {
             'name': 'Test',

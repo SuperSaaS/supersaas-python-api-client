@@ -114,10 +114,9 @@ class Appointments(BaseApi):
         return Appointment(res)
 
     def delete(self, schedule_id, appointment_id, webhook=None):
-        params = {'webhook': webhook}
         path = f'/bookings/{self._validate_id(appointment_id)}'
-        query = {'schedule_id': schedule_id}
-        return self.client.delete(path, params, query)
+        query = {'schedule_id': schedule_id, 'webhook': 'true' if webhook else None}
+        return self.client.delete(path, None, query)
 
     def changes(self,
                 schedule_id,
