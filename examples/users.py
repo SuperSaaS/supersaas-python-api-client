@@ -1,8 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
-import os
-from SuperSaaS import Client  # Adjust based on actual Python package or module
+import sys
+
+from SuperSaaS import Client, Error
 
 print("# SuperSaaS Users Example")
 
@@ -11,12 +11,12 @@ client = Client.instance()
 # Check for environment variables for account credentials
 if not (client.account_name and client.api_key):
     print(
-        "ERROR! Missing account credentials. Rerun the script with your credentials, e.g.,"
+        "ERROR! Missing account credentials. Rerun the script with your credentials, e.g."
     )
     print(
-        "SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<xxxxxxxxxxxxxxxxxxxxxx> python examples/users.py"
+        "SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<xxxxxxxxxxxxxxxxxxxxxx> python3 ./examples/users.py"
     )
-    exit()
+    sys.exit(1)
 
 print(f"## Account:  {client.account_name}")
 print(f"## API Key: {'*' * len(client.api_key)}")
@@ -57,11 +57,11 @@ else:
     print("... did not find user in list")
 
 print("creating user with errors...")
-print("#### client.users.create")
+print("#### client.users.create({'name': 'error'})")
 try:
     client.users.create({'name': 'error'})
-except Exception as e:  # Adjust based on actual exception handling in your Python client
-    print(f"This raises an error {str(e)}")
+except Error as e:
+    print(f"This raises an error {e}")
 
-print("#### client.users.field_list")
+print("#### client.users.field_list()")
 client.users.field_list()

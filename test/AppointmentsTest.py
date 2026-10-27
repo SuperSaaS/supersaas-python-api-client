@@ -132,6 +132,28 @@ class AppointmentsTest(SupersaasTest):
         self.assertIsNotNone(
             self.client.appointments.delete(schedule_id, appointment_id, True))
 
+    def test_delete_sends_webhook_in_query(self):
+        from urllib.parse import parse_qs, urlparse
+        self.client.appointments.delete(12345, 67890, True)
+        query = parse_qs(urlparse(self.client.last_request.full_url).query)
+        self.assertEqual({'schedule_id': ['12345'], 'webhook': ['true']}, query)
+        self.assertIsNone(self.client.last_request.data)
+
+    def test_create_accepts_wrapped_attributes(self):
+        import json
+        self.client.appointments.create(12345, 67890, {'booking': {'full_name': 'Tester Test'}})
+        self.assertEqual({'full_name': 'Tester Test'}, json.loads(self.client.last_request.data)['booking'])
+
+    def test_update_accepts_wrapped_attributes(self):
+        import json
+        self.client.appointments.update(12345, 67890, {'booking': {'full_name': 'Tester Test'}})
+        self.assertEqual({'full_name': 'Tester Test'}, json.loads(self.client.last_request.data)['booking'])
+
+    def test_update_with_none_booking_sends_empty_booking(self):
+        import json
+        self.client.appointments.update(12345, 67890, {'booking': None})
+        self.assertEqual({}, json.loads(self.client.last_request.data)['booking'])
+
     def __appointment_attributes(self):
         return {
             'description': 'Testing.',
@@ -148,3 +170,16 @@ class AppointmentsTest(SupersaasTest):
             'field_2_r': 'f 2 r',
             'super_field': 'sf'
         }
+
+    def test_update_does_not_print(self):
+        # Imported here to keep the module's import block untouched
+        import io
+        import json
+        from contextlib import redirect_stdout
+
+        with redirect_stdout(io.StringIO()) as out:
+            self.client.appointments.update(12345, 67890, {'full_name': 'Tester Test'})
+        self.assertEqual('', out.getvalue())
+        self.assertEqual('PUT', self.client.last_request.get_method())
+        self.assertEqual({'schedule_id': 12345, 'booking': {'full_name': 'Tester Test'}},
+                         json.loads(self.client.last_request.data))

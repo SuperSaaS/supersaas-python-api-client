@@ -15,9 +15,8 @@ class Appointments(BaseApi):
         res = self.client.get(path, query)
         return self.__map_slots_or_bookings(res)
 
-
-    # LEGACY METHOD WILL BE REMOVED PLEASE USE AGENDA ABOVE
     def agenda_slots(self, schedule_id, user_id, from_time=None):
+        """Deprecated, will be removed in a future version. Use `agenda(..., slot=True)` instead."""
         path = f"/agenda/{self._validate_id(schedule_id)}"
         query = {
             'user': self._validate_present(user_id),
@@ -104,30 +103,20 @@ class Appointments(BaseApi):
         path = f"/bookings/{self._validate_id(appointment_id)}"
         params = self.__create_update_params(schedule_id, attributes, form, webhook)
 
-        # Debug print
-        print(f"Update params: {params}")
-        print(f"Update path: {path}")
-
-        # Ensure booking attributes are not None
+        # Attributes passed as {'booking': None} are sent as an empty booking
         if params.get('booking') is None:
             params['booking'] = {}
 
         # Filter out None values from booking attributes
         params['booking'] = {k: v for k, v in params['booking'].items() if v is not None}
 
-        try:
-            res = self.client.put(path, params)
-            return Appointment(res)
-        except Exception as e:
-            print(f"Update error: {str(e)}")
-            print(f"Params sent: {params}")
-            raise
+        res = self.client.put(path, params)
+        return Appointment(res)
 
     def delete(self, schedule_id, appointment_id, webhook=None):
-        params = {'webhook': webhook}
         path = f'/bookings/{self._validate_id(appointment_id)}'
-        query = {'schedule_id': schedule_id}
-        return self.client.delete(path, params, query)
+        query = {'schedule_id': schedule_id, 'webhook': 'true' if webhook else None}
+        return self.client.delete(path, None, query)
 
     def changes(self,
                 schedule_id,
@@ -143,8 +132,8 @@ class Appointments(BaseApi):
         res = self.client.get(path, params)
         return self.__map_slots_or_bookings(res)
 
-    # This is a legacy method, please use the changes method
     def changes_slots(self, schedule_id, from_time=None):
+        """Deprecated, will be removed in a future version. Use `changes(..., slot=True)` instead."""
         path = f"/changes/{self._validate_id(schedule_id)}"
         query = {
             'from': self._validate_datetime(from_time) if from_time else None,
@@ -176,6 +165,9 @@ class Appointments(BaseApi):
     def __create_update_params(self, schedule_id, attributes,
                                form=None,
                                webhook=None):
+        # Attributes may be passed already wrapped as {'booking': {...}}
+        if isinstance(attributes, dict) and 'booking' in attributes:
+            attributes = attributes['booking'] or {}
         params = {
             'schedule_id': self._validate_id(schedule_id),
             'booking': {

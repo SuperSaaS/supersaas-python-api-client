@@ -1,4 +1,4 @@
-class BaseModel(object):
+class BaseModel:
 
     def __init__(self, attributes):
         for key in attributes:

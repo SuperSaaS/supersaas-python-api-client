@@ -16,6 +16,22 @@ class ClientTest(SupersaasTest):
             self.assertIsNotNone(
                 self.client.request(method, '/test', {'test': True}))
 
+    def test_verbose_log_hides_secrets(self):
+        import io
+        import json
+        from contextlib import redirect_stdout
+        self.client.verbose = True
+        self.client.api_key = 'secret-api-key'
+        with redirect_stdout(io.StringIO()) as out:
+            self.client.users.create({'name': 'user', 'password': 'secret-password'})
+        log = out.getvalue()
+        self.assertIn('POST https://www.supersaas.com/api/users.json', log)
+        self.assertIn('"name": "user"', log)
+        for secret in ('secret-password', 'secret-api-key', 'Authorization', 'Basic '):
+            self.assertNotIn(secret, log)
+        # Only the log is redacted, the request itself is unchanged
+        self.assertEqual('secret-password', json.loads(self.client.last_request.data)['user']['password'])
+
     def test_instance_configuration(self):
         self.client.configure(account_name='account',
                               api_key='xxxxxxxxxxxxxxxxxxxxxx')

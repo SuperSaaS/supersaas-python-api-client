@@ -1,4 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+
+import sys
+
 from SuperSaaS import Client
 
 print("# SuperSaaS Schedules Example")
@@ -9,8 +12,9 @@ if not (client.account_name and client.api_key):
         "ERROR! Missing account credentials. Rerun the script with your credentials, e.g."
     )
     print(
-        "    SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<myapikey> ./examples/schedules.py"
+        "    SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<myapikey> python3 ./examples/schedules.py"
     )
+    sys.exit(1)
 
 client.verbose = True
 
@@ -21,14 +25,13 @@ schedules = client.schedules.list()
 print("listing schedule resources...")
 for i in range(min(10, len(schedules))):
     print(f"#### client.schedules.resources({schedules[i].id})")
-    # Capacity schedules bomb
+    # Capacity schedules have no resources, the API returns an error for them
     try:
         client.schedules.resources(schedules[i].id)
     except Exception as e:
         print(
-            f"Error fetching resources for schedule {schedules[i].id}: {str(e)}"
+            f"Error fetching resources for schedule {schedules[i].id}: {e}"
         )
-        continue
 
 print("listing fields...")
 for i in range(min(10, len(schedules))):

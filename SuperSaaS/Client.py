@@ -16,8 +16,23 @@ PYTHON_VERSION = '.'.join([str(info) for info in sys.version_info])
 API_VERSION = '3'
 VERSION = '2.0.1'
 
+SECRET_KEYS = ('password',)
+
+
+def _redact_for_log(data):
+    """JSON request body for the verbose log, with secret values such as passwords masked."""
+    def redact(value):
+        if isinstance(value, dict):
+            return {k: '[FILTERED]' if k in SECRET_KEYS else redact(v) for k, v in value.items()}
+        if isinstance(value, list):
+            return [redact(v) for v in value]
+        return value
+    return json.dumps(redact(json.loads(data))).encode('utf-8') if data else data
+
 
 class RateLimiter:
+    """Client side throttle: at most MAX_PER_WINDOW requests per WINDOW_SIZE seconds."""
+
     WINDOW_SIZE = 1  # seconds
     MAX_PER_WINDOW = 4  # max requests per window
 
@@ -45,7 +60,10 @@ class RateLimiter:
                     if sleep_time > 0:
                         time.sleep(sleep_time)
 
+
 class Client:
+    """SuperSaaS API client. Use `Client.instance()` for the shared, configurable singleton."""
+
     __singleton_lock = threading.Lock()
     __singleton_instance = None
 
@@ -154,9 +172,9 @@ class Client:
             print('')
             print("### SuperSaaS Client Request:")
             print('')
-            print(f"#{http_method} #{url}")
+            print(f"{http_method} {url}")
             print('')
-            print(data)
+            print(_redact_for_log(data))
             print('')
             print("------------------------------")
 
@@ -187,11 +205,8 @@ class Configuration:
     DEFAULT_HOST = 'https://www.supersaas.com'
 
     def __init__(self):
-        self.account_name = os.environ[
-            'SSS_API_ACCOUNT_NAME'] if 'SSS_API_ACCOUNT_NAME' in os.environ else ''
-        self.api_key = os.environ[
-            'SSS_API_KEY'] if 'SSS_API_KEY' in os.environ else ''
-        self.host = os.environ[
-            'SSS_API_HOST'] if 'SSS_API_HOST' in os.environ else self.DEFAULT_HOST
+        self.account_name = os.environ.get('SSS_API_ACCOUNT_NAME', '')
+        self.api_key = os.environ.get('SSS_API_KEY', '')
+        self.host = os.environ.get('SSS_API_HOST', self.DEFAULT_HOST)
         self.dry_run = False
         self.verbose = False
