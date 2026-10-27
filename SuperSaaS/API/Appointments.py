@@ -15,9 +15,8 @@ class Appointments(BaseApi):
         res = self.client.get(path, query)
         return self.__map_slots_or_bookings(res)
 
-
-    # LEGACY METHOD WILL BE REMOVED PLEASE USE AGENDA ABOVE
     def agenda_slots(self, schedule_id, user_id, from_time=None):
+        """Deprecated, will be removed in a future version. Use `agenda(..., slot=True)` instead."""
         path = f"/agenda/{self._validate_id(schedule_id)}"
         query = {
             'user': self._validate_present(user_id),
@@ -130,8 +129,8 @@ class Appointments(BaseApi):
         res = self.client.get(path, params)
         return self.__map_slots_or_bookings(res)
 
-    # This is a legacy method, please use the changes method
     def changes_slots(self, schedule_id, from_time=None):
+        """Deprecated, will be removed in a future version. Use `changes(..., slot=True)` instead."""
         path = f"/changes/{self._validate_id(schedule_id)}"
         query = {
             'from': self._validate_datetime(from_time) if from_time else None,

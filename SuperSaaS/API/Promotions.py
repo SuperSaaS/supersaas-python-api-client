@@ -12,7 +12,7 @@ class Promotions(BaseApi):
             'offset':
             self._validate_number(offset) if offset is not None else None
         }
-        # Filter out None values
+        # Filter out None values, so Client.request does not append an empty "?" to the URL
         params = {k: v for k, v in params.items() if v is not None}
         res = self.client.get(path, params)
         return [Promotion(attributes) for attributes in res]
