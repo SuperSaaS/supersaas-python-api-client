@@ -1,6 +1,6 @@
 [[source]]
 
-url = "https://pypi.python.org/simple"
+url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
@@ -8,6 +8,9 @@ name = "pypi"
 
 [dev-packages]
 pytest = "*"
+ruff = "==0.17.3"
+build = "*"
+twine = "*"
 
 [requires]
 python_version = "3"
