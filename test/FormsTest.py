@@ -30,3 +30,4 @@ class FormsTest(SupersaasTest):
         self.assertEqual(['12345'], query['user'])
         self.assertEqual(['10'], query['limit'])
         self.assertEqual(['20'], query['offset'])
+        self.assertNotIn('from_time', query)

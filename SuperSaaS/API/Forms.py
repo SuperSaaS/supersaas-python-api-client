@@ -15,8 +15,6 @@ class Forms(BaseApi):
         path = "/forms"
         params = {'form_id': self._validate_id(superform_id)}
         if from_time:
-            params['from_time'] = self._validate_datetime(from_time)
-        if from_time:
             params['from'] = self._validate_datetime(from_time)
         if user or user == 0:
             params['user'] = self._validate_user(user)
