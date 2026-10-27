@@ -16,6 +16,19 @@ PYTHON_VERSION = '.'.join([str(info) for info in sys.version_info])
 API_VERSION = '3'
 VERSION = '2.0.1'
 
+SECRET_KEYS = ('password',)
+
+
+def _redact_for_log(data):
+    """JSON request body for the verbose log, with secret values such as passwords masked."""
+    def redact(value):
+        if isinstance(value, dict):
+            return {k: '[FILTERED]' if k in SECRET_KEYS else redact(v) for k, v in value.items()}
+        if isinstance(value, list):
+            return [redact(v) for v in value]
+        return value
+    return json.dumps(redact(json.loads(data))).encode('utf-8') if data else data
+
 
 class RateLimiter:
     """Client side throttle: at most MAX_PER_WINDOW requests per WINDOW_SIZE seconds."""
@@ -161,7 +174,7 @@ class Client:
             print('')
             print(f"{http_method} {url}")
             print('')
-            print(data)
+            print(_redact_for_log(data))
             print('')
             print("------------------------------")
 
