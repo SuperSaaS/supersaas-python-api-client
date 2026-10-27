@@ -166,6 +166,9 @@ class Appointments(BaseApi):
     def __create_update_params(self, schedule_id, attributes,
                                form=None,
                                webhook=None):
+        # Attributes may be passed already wrapped as {'booking': {...}}
+        if isinstance(attributes, dict) and 'booking' in attributes:
+            attributes = attributes['booking'] or {}
         params = {
             'schedule_id': self._validate_id(schedule_id),
             'booking': {

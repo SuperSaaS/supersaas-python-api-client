@@ -132,6 +132,21 @@ class AppointmentsTest(SupersaasTest):
         self.assertIsNotNone(
             self.client.appointments.delete(schedule_id, appointment_id, True))
 
+    def test_create_accepts_wrapped_attributes(self):
+        import json
+        self.client.appointments.create(12345, 67890, {'booking': {'full_name': 'Tester Test'}})
+        self.assertEqual({'full_name': 'Tester Test'}, json.loads(self.client.last_request.data)['booking'])
+
+    def test_update_accepts_wrapped_attributes(self):
+        import json
+        self.client.appointments.update(12345, 67890, {'booking': {'full_name': 'Tester Test'}})
+        self.assertEqual({'full_name': 'Tester Test'}, json.loads(self.client.last_request.data)['booking'])
+
+    def test_update_with_none_booking_sends_empty_booking(self):
+        import json
+        self.client.appointments.update(12345, 67890, {'booking': None})
+        self.assertEqual({}, json.loads(self.client.last_request.data)['booking'])
+
     def __appointment_attributes(self):
         return {
             'description': 'Testing.',
