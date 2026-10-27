@@ -1,6 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import os
+import sys
+from random import choice
+
 from SuperSaaS import Client
 
 print("# SuperSaaS Forms Example")
@@ -10,18 +13,18 @@ if not (Client.instance().account_name and Client.instance().api_key):
         "ERROR! Missing account credentials. Rerun the script with your credentials, e.g."
     )
     print(
-        "    SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<myapikey> ./examples/forms.py"
+        "    SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<myapikey> python3 ./examples/forms.py"
     )
-    exit()
+    sys.exit(1)
 
 Client.instance().verbose = True
 
-if not 'SSS_API_SCHEDULE' in os.environ:
+if 'SSS_API_SCHEDULE' not in os.environ:
     print(
         "ERROR! Missing schedule id. Rerun the script with your schedule id, e.g."
     )
-    print("    SSS_API_SCHEDULE=<scheduleid> ./examples/appointments.py")
-    exit()
+    print("    SSS_API_SCHEDULE=<scheduleid> python3 ./examples/forms.py")
+    sys.exit(1)
 
 schedule_id = os.environ['SSS_API_SCHEDULE']
 
@@ -33,18 +36,17 @@ print(
 )
 
 print("listing forms...")
-print("#### Client.instance().forms.forms")
+print("#### Client.instance().forms.forms()")
 
 template_forms = Client.instance().forms.forms()
 
 if template_forms:
-    from random import choice
     template_form_id = choice(template_forms).id
 
     print("listing forms from account")
-    print("#### Client.instance().forms.list")
+    print(f"#### Client.instance().forms.list({template_form_id})")
     form_id = choice(
-        Client.instance().instance().forms.list(template_form_id)).id
+        Client.instance().forms.list(template_form_id)).id
 
     print("getting form...")
     print(f"#### Client.instance().forms.get({form_id})")

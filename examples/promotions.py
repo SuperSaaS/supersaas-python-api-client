@@ -1,4 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
+import sys
 
 from SuperSaaS import Client
 
@@ -9,12 +11,12 @@ client = Client.instance()
 # Check for environment variables for account credentials
 if not (client.account_name and client.api_key):
     print(
-        "ERROR! Missing account credentials. Rerun the script with your credentials, e.g.,"
+        "ERROR! Missing account credentials. Rerun the script with your credentials, e.g."
     )
     print(
-        "SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<xxxxxxxxxxxxxxxxxxxxxx> python examples/users.py"
+        "SSS_API_ACCOUNT_NAME=<myaccountname> SSS_API_KEY=<xxxxxxxxxxxxxxxxxxxxxx> python3 ./examples/promotions.py"
     )
-    exit()
+    sys.exit(1)
 
 print(f"## Account:  {client.account_name}")
 print(f"## API KEY: {'*' * len(client.api_key)}")
@@ -22,12 +24,12 @@ print(f"## API KEY: {'*' * len(client.api_key)}")
 client.verbose = True
 
 print("listing promotions...")
-print("#### client.promotions.list")
+print("#### client.promotions.list()")
 promotions = client.promotions.list()
 
 for i in range(min(10, len(promotions))):
     print("A promotion")
-    print(f"#### client.promotion({promotions[i].id})")
+    print(f"#### client.promotions.promotion('{promotions[i].code}')")
     client.promotions.promotion(promotions[i].code)
 
 # Uncomment to try out duplicating a promotional code
