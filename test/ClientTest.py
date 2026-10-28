@@ -1,8 +1,17 @@
-from .Helper import SupersaasTest
-import SuperSaaS
-import time
+import importlib
+import io
 import os
+import time
 import unittest
+from unittest import mock
+from urllib.error import HTTPError
+
+import SuperSaaS
+from .Helper import SupersaasTest
+
+# The package re-exports the Client class under the same name as the module, so on
+# Python < 3.11 mock.patch('SuperSaaS.Client.urlopen') resolves to the class.
+client_module = importlib.import_module('SuperSaaS.Client')
 
 class ClientTest(SupersaasTest):
 
@@ -52,3 +61,39 @@ class ClientTest(SupersaasTest):
         # Assert that the elapsed time is greater than or equal to 5.0 seconds
         self.assertGreaterEqual(end_time - start_time, 4.0)
         self.assertLessEqual(end_time - start_time, 4.1)
+
+    def test_ping(self):
+        self.assertTrue(self.client.ping())
+        self.assertEqual('GET', self.client.last_request.get_method())
+        self.assertIn('/api/ping.json', self.client.last_request.full_url)
+
+    def __http_error(self, code, reason, body):
+        return HTTPError('http://x', code, reason, {}, io.BytesIO(body))
+
+    def test_http_error_details(self):
+        self.client.dry_run = False
+        body = b'{"errors":[{"status":"404","title":"Not found"}]}'
+        with mock.patch.object(client_module, 'urlopen',
+                        side_effect=self.__http_error(404, 'Not Found', body)):
+            with self.assertRaises(SuperSaaS.Error) as cm:
+                self.client.get("/test")
+        self.assertEqual(
+            'HTTP Request Error: Not Found, (https://www.supersaas.com/api/test.json)',
+            str(cm.exception))
+        self.assertEqual(404, cm.exception.status)
+        self.assertEqual([{'status': '404', 'title': 'Not found'}], cm.exception.errors)
+
+    def test_http_error_empty_body(self):
+        self.client.dry_run = False
+        with mock.patch.object(client_module, 'urlopen',
+                        side_effect=self.__http_error(422, 'Unprocessable Content', b'')):
+            with self.assertRaises(SuperSaaS.Error) as cm:
+                self.client.get("/test")
+        self.assertTrue(str(cm.exception).startswith('HTTP Request Error: Unprocessable Content, ('))
+        self.assertEqual(422, cm.exception.status)
+        self.assertEqual([], cm.exception.errors)
+
+    def test_error_defaults(self):
+        error = SuperSaaS.Error('x')
+        self.assertIsNone(error.status)
+        self.assertEqual([], error.errors)
