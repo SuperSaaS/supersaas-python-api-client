@@ -14,7 +14,7 @@ from .Error import Error
 PYTHON_VERSION = '.'.join([str(info) for info in sys.version_info])
 
 API_VERSION = '3'
-VERSION = '2.0.1'
+VERSION = '2.1.0'
 
 
 class RateLimiter:
