@@ -1,8 +1,12 @@
-from .Helper import SupersaasTest
-import SuperSaaS
-import time
+import io
 import os
+import time
 import unittest
+from unittest import mock
+from urllib.error import HTTPError
+
+import SuperSaaS
+from .Helper import SupersaasTest
 
 class ClientTest(SupersaasTest):
 
@@ -43,12 +47,9 @@ class ClientTest(SupersaasTest):
         self.assertIn('/api/ping.json', self.client.last_request.full_url)
 
     def __http_error(self, code, reason, body):
-        import io
-        from urllib.error import HTTPError
         return HTTPError('http://x', code, reason, {}, io.BytesIO(body))
 
     def test_http_error_details(self):
-        from unittest import mock
         self.client.dry_run = False
         body = b'{"errors":[{"status":"404","title":"Not found"}]}'
         with mock.patch('SuperSaaS.Client.urlopen',
@@ -62,7 +63,6 @@ class ClientTest(SupersaasTest):
         self.assertEqual([{'status': '404', 'title': 'Not found'}], cm.exception.errors)
 
     def test_http_error_empty_body(self):
-        from unittest import mock
         self.client.dry_run = False
         with mock.patch('SuperSaaS.Client.urlopen',
                         side_effect=self.__http_error(422, 'Unprocessable Content', b'')):
