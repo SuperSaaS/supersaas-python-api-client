@@ -1,3 +1,4 @@
+import importlib
 import io
 import os
 import time
@@ -7,6 +8,10 @@ from urllib.error import HTTPError
 
 import SuperSaaS
 from .Helper import SupersaasTest
+
+# The package re-exports the Client class under the same name as the module, so on
+# Python < 3.11 mock.patch('SuperSaaS.Client.urlopen') resolves to the class.
+client_module = importlib.import_module('SuperSaaS.Client')
 
 class ClientTest(SupersaasTest):
 
@@ -52,7 +57,7 @@ class ClientTest(SupersaasTest):
     def test_http_error_details(self):
         self.client.dry_run = False
         body = b'{"errors":[{"status":"404","title":"Not found"}]}'
-        with mock.patch('SuperSaaS.Client.urlopen',
+        with mock.patch.object(client_module, 'urlopen',
                         side_effect=self.__http_error(404, 'Not Found', body)):
             with self.assertRaises(SuperSaaS.Error) as cm:
                 self.client.get("/test")
@@ -64,7 +69,7 @@ class ClientTest(SupersaasTest):
 
     def test_http_error_empty_body(self):
         self.client.dry_run = False
-        with mock.patch('SuperSaaS.Client.urlopen',
+        with mock.patch.object(client_module, 'urlopen',
                         side_effect=self.__http_error(422, 'Unprocessable Content', b'')):
             with self.assertRaises(SuperSaaS.Error) as cm:
                 self.client.get("/test")
