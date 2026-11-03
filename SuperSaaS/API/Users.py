@@ -54,6 +54,11 @@ class Users(BaseApi):
         res = self.client.get(path)
         return [FieldList(attributes) for attributes in res]
 
+    def input_field_list(self):
+        path = '/input_field_list'
+        res = self.client.get(path)
+        return [FieldList(attributes) for attributes in res]
+
     def __user_path(self, user_id=None):
         return f"/users/{user_id}" if user_id else "/users"
 

@@ -119,6 +119,12 @@ Get all the available fields of a schedule by `schedule_id`:
 
     Client.instance().schedules.field_list(12345)
 
+#### List Input Fields of a Schedule
+
+Get the input fields (`name`, `type`, `label`, `required`, ...) of a schedule by `schedule_id`:
+
+    Client.instance().schedules.input_field_list(12345)
+
 #### Create User
 
 Create a user with user attributes params `create(attributes, user_id=None, webhook=None, duplicate=None)`.
@@ -166,12 +172,22 @@ Get all the fields available to user object:
 
     Client.instance().users.field_list()
 
+#### List Input Fields of User object
+
+Get the input fields (`name`, `type`, `label`, `required`, ...) of the user object:
+
+    Client.instance().users.input_field_list()
+
 #### Create Appointment/Booking
 
 Create an appointment with `schedule_id`, and `user_id(optional)` (see API documentation on [create new](https://www.supersaas.com/info/dev/appointment_api#bookings_api)) appointment attributes and optional `form` and `webhook` params,
 `create(schedule_id, user_id, attributes, form=None, webhook=None)`:
 
     Client.instance().appointments.create(schedule_id=12345, user_id=67890, attributes={'full_name': 'Example Name', 'email': 'example@example.com', 'slot_id': 12345}, form=True, webhook=True)
+
+**Input attributes** are sent on create and update: `start`, `finish`, `full_name`, `email`, `address`, `mobile`, `phone`, `country`, `field_1`, `field_2`, `field_1_r`, `field_2_r`, `super_field`, `description` and `form_id`, plus what is booked: `resource_id` on a resource schedule, or `slot_id` and `quantity` (number of places) on a capacity schedule. Any other attribute is not sent. The API does not support creating bookings on service schedules.
+
+**Read-only attributes** are returned when reading appointments but never sent: `id`, `created_on`, `updated_on`, `created_by`, `updated_by`, `user_id`, `deleted`, `res_name`, `service_id`, `service_name`, `waitlisted`, and `form` when reading with `form` set.
 
 #### Update Appointment/Booking
 
@@ -197,6 +213,42 @@ Get a single appointment by `schedule_id` and `appointment_id`:
 List appointments by `schedule_id`, with `form` and `start_time` and `limit` view params `list(schedule_id, form=None, start_time=None, limit=None, finish=None)`:
 
     Client.instance().appointments.list(schedule_id=12345, form=True, start_time=datetime.now(), limit=50)
+
+#### List Slots
+
+List the slots of a capacity type schedule by `schedule_id`, with optional `start_time`/`finish` range and `limit` (default 100, max 2500)/`offset` pagination params,
+`list(schedule_id, start_time=None, finish=None, limit=None, offset=None)`:
+
+    Client.instance().slots.list(schedule_id=12345, start_time=datetime.now(), limit=50)
+
+_Note: only works for capacity type schedules, otherwise a 405 error is raised._
+
+#### Get Slot
+
+Get a single slot by `schedule_id` and `slot_id`, will raise 404 error if not found:
+
+    Client.instance().slots.get(schedule_id=12345, slot_id=67890)
+
+#### Create Slot
+
+Create a slot with `schedule_id` and slot attributes `start`, `finish`, `title`, `description`, `location`, `capacity`, `price` and `color`,
+`create(schedule_id, attributes)`. Returns a dict with the `location` of the new slot.
+A `capacity` of `'-'` means unlimited places, `0` means no places:
+
+    Client.instance().slots.create(schedule_id=12345, attributes={'start': '2030-01-31 10:00:00', 'finish': '2030-01-31 11:00:00', 'title': 'Yoga', 'capacity': 10})
+
+#### Update Slot
+
+Update a slot by `schedule_id` and `slot_id`, you only need to specify the attributes you wish to update,
+`update(schedule_id, slot_id, attributes)`:
+
+    Client.instance().slots.update(schedule_id=12345, slot_id=67890, attributes={'capacity': 12})
+
+#### Delete Slot
+
+Delete a single slot by `schedule_id` and `slot_id`. Note that this also deletes the appointments booked on the slot:
+
+    Client.instance().slots.delete(schedule_id=12345, slot_id=67890)
 
 #### Get Agenda
 
@@ -290,6 +342,29 @@ List Groups in an account ([see](https://www.supersaas.com/info/dev/information_
 
     Client.instance().groups.list()
 
+#### Ping
+
+Check that the credentials are valid. Returns `True`, raises `SuperSaaS.Error` otherwise:
+
+    Client.instance().ping()
+
+#### Hooks
+
+Create a webhook with `create(target_url, event, parent_id)`. `event` is a trigger letter: U user created, M user modified,
+N new appointment, C changed appointment, R reminder, F follow-up, S form submitted, O form changed, H mail, P credit purchase.
+`parent_id` is the schedule id for N/C/R/F, the super form id for S/O, and must be present (but is ignored) for U/M/H/P.
+Returns a dict with `id` and `parent_id`:
+
+    hook = Client.instance().hooks.create('https://www.example.com/hook', 'N', 12345)
+
+Delete a webhook with `delete(hook_id, parent_id)`:
+
+    Client.instance().hooks.delete(hook['id'], hook['parent_id'])
+
+List the webhooks of the account:
+
+    Client.instance().hooks.list()
+
 ## Error Handling
 
 The API Client raises a custom Error for HTTP errors and invalid input. Rescue from `SuperSaaS.Error` when making API requests. e.g.
@@ -300,6 +375,15 @@ The API Client raises a custom Error for HTTP errors and invalid input. Rescue f
         Client.instance().users.get(12345)
     except Error:
         # Handle error
+
+The error message is unchanged, and `Error` additionally has a `status` attribute (the HTTP status code, or `None` for
+errors that are not HTTP responses) and an `errors` attribute (the list of errors from the response body, `[]` if there are none). e.g.
+
+    try:
+        Client.instance().users.get(999999)
+    except Error as e:
+        e.status #=> 404
+        e.errors #=> [{"status":"404","title":"Not found"}]
 
 Validation errors are assigned to the response model. e.g.
 

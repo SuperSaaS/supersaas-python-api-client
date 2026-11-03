@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='supersaas-api-client',
-    version='2.0.1',
+    version='2.1.0',
     license='MIT',
     packages=find_packages(exclude=['test', 'test.*', 'examples', 'examples.*']),
     include_package_data=True,
